@@ -1,51 +1,47 @@
-'use client';
-
 import { useState } from 'react';
 
 export interface Message {
   id: string;
-  sender: 'ai' | 'user';
   text: string;
+  sender: 'user' | 'ai';
   timestamp: Date;
 }
 
 export function useChat() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      sender: 'ai',
-      text: 'Halo! Saya AI Assistant. Ada yang bisa saya bantu?',
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   const sendMessage = (text: string) => {
-    if (!text.trim()) return;
-
     // Add user message
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}`,
+      text,
       sender: 'user',
-      text: text.trim(),
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
 
-    // Simulate AI response after a short delay
+    // Simulate AI typing
+    setIsTyping(true);
+
+    // Simulate AI response with delay
     setTimeout(() => {
       const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `ai-${Date.now()}`,
+        text: `Terima kasih atas pesan Anda: "${text}". Saya adalah AI Assistant dan siap membantu Anda!`,
         sender: 'ai',
-        text: 'Terima kasih atas pesan Anda! Ini adalah respons otomatis dari AI Assistant.',
         timestamp: new Date(),
       };
+
       setMessages((prev) => [...prev, aiMessage]);
-    }, 1000);
+      setIsTyping(false);
+    }, 1500); // 1.5 second delay for realistic feel
   };
 
   return {
     messages,
+    isTyping,
     sendMessage,
   };
 }

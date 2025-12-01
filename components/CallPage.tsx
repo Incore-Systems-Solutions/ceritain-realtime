@@ -8,7 +8,6 @@ import {
   MicOff,
   Volume2,
   VolumeX,
-  X
 } from 'lucide-react';
 
 interface CallPageProps {
@@ -58,18 +57,21 @@ export function CallPage({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-[#0a0a0a]"
+      className="fixed inset-0 z-50"
+      style={{
+        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+      }}
     >
-      {/* Subtle Background Pattern - Behind everything */}
-      <div className="absolute inset-0 opacity-5 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.3),transparent_50%)]" />
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3),transparent_50%)]" />
       </div>
 
       {/* Main Content */}
-      <div className="relative h-full flex flex-col items-center justify-between py-20 px-8 z-0">
+      <div className="relative h-full flex flex-col items-center justify-between py-16 px-8">
 
         {/* Top Section - Avatar & Status */}
-        <div className="flex flex-col items-center gap-8 mt-8">
+        <div className="flex flex-col items-center gap-8 mt-16">
           {/* Avatar with pulse animation */}
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -77,35 +79,37 @@ export function CallPage({
             transition={{ duration: 0.5 }}
             className="relative"
           >
-            <div className="w-36 h-36 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center text-white text-5xl font-bold shadow-2xl ring-4 ring-white/5">
-              {contactAvatar || 'AI'}
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/10">
+              <span className="text-white text-5xl font-bold">
+                {contactAvatar || 'AI'}
+              </span>
             </div>
 
             {/* Pulse rings for connecting state */}
             {callStatus === 'connecting' && (
               <>
                 <motion.div
-                  className="absolute inset-0 rounded-full border-4 border-purple-400/30"
-                  animate={{ scale: [1, 1.3, 1.3], opacity: [0.5, 0, 0] }}
+                  className="absolute inset-0 rounded-full border-4 border-blue-400/30"
+                  animate={{ scale: [1, 1.4, 1.4], opacity: [0.6, 0, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
                 <motion.div
-                  className="absolute inset-0 rounded-full border-4 border-purple-400/30"
-                  animate={{ scale: [1, 1.5, 1.5], opacity: [0.5, 0, 0] }}
+                  className="absolute inset-0 rounded-full border-4 border-blue-400/30"
+                  animate={{ scale: [1, 1.6, 1.6], opacity: [0.6, 0, 0] }}
                   transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                 />
               </>
             )}
           </motion.div>
 
-          {/* Contact Name */}
+          {/* Contact Name & Status */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-center"
           >
-            <h1 className="text-4xl font-semibold text-white/95 mb-3">
+            <h1 className="text-4xl font-semibold text-white mb-3 tracking-tight">
               {contactName}
             </h1>
             <AnimatePresence mode="wait">
@@ -115,7 +119,7 @@ export function CallPage({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-lg text-white/60"
+                  className="text-lg text-white/70"
                 >
                   Connecting...
                 </motion.p>
@@ -125,7 +129,7 @@ export function CallPage({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-lg text-white/60 font-mono"
+                  className="text-lg text-white/70 font-mono"
                 >
                   {formatDuration(callDuration)}
                 </motion.p>
@@ -139,66 +143,70 @@ export function CallPage({
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="w-full max-w-md mb-8"
+          className="w-full max-w-md mb-12"
         >
           {/* Control Buttons */}
-          <div className="flex items-center justify-center gap-8 mb-10">
+          <div className="flex items-center justify-center gap-8 mb-12">
             {/* Mute Button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsMuted(!isMuted)}
-              className={`p-6 rounded-full transition-all shadow-lg border ${isMuted
-                ? 'bg-red-500 hover:bg-red-600 border-red-500'
-                : 'bg-white/5 hover:bg-white/10 border-white/10'
+              className={`w-14 h-14 rounded-full transition-all shadow-lg ${isMuted
+                  ? 'bg-red-500 hover:bg-red-600'
+                  : 'bg-white/10 hover:bg-white/20 backdrop-blur-md'
                 }`}
               aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
               {isMuted ? (
-                <MicOff className="w-7 h-7 text-white" />
+                <MicOff className="w-6 h-6 text-white mx-auto" />
               ) : (
-                <Mic className="w-7 h-7 text-white/90" />
+                <Mic className="w-6 h-6 text-white mx-auto" />
               )}
-            </button>
+            </motion.button>
 
             {/* Speaker Button */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsSpeakerOn(!isSpeakerOn)}
-              className={`p-6 rounded-full transition-all shadow-lg border ${!isSpeakerOn
-                ? 'bg-red-500 hover:bg-red-600 border-red-500'
-                : 'bg-white/5 hover:bg-white/10 border-white/10'
+              className={`w-14 h-14 rounded-full transition-all shadow-lg ${!isSpeakerOn
+                  ? 'bg-red-500 hover:bg-red-600'
+                  : 'bg-white/10 hover:bg-white/20 backdrop-blur-md'
                 }`}
               aria-label={isSpeakerOn ? 'Turn off speaker' : 'Turn on speaker'}
             >
               {isSpeakerOn ? (
-                <Volume2 className="w-7 h-7 text-white/90" />
+                <Volume2 className="w-6 h-6 text-white mx-auto" />
               ) : (
-                <VolumeX className="w-7 h-7 text-white" />
+                <VolumeX className="w-6 h-6 text-white mx-auto" />
               )}
-            </button>
+            </motion.button>
           </div>
 
           {/* End Call Button */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onEndCall}
-            className="w-full py-5 rounded-full bg-red-500 hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-3"
+            className="w-full py-4 rounded-full bg-red-500 hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-3"
             aria-label="End call"
           >
-            <PhoneOff className="w-7 h-7 text-white" />
-            <span className="text-white font-semibold text-xl">End Call</span>
+            <PhoneOff className="w-6 h-6 text-white" />
+            <span className="text-white font-semibold text-lg">End Call</span>
           </motion.button>
         </motion.div>
       </div>
 
       {/* Audio wave visualization (decorative) */}
       {callStatus === 'connected' && !isMuted && (
-        <div className="absolute bottom-56 left-1/2 -translate-x-1/2 flex items-center gap-1">
+        <div className="absolute bottom-64 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
           {[...Array(5)].map((_, i) => (
             <motion.div
               key={i}
-              className="w-1 bg-purple-400/40 rounded-full"
+              className="w-1 bg-blue-400/40 rounded-full"
               animate={{
-                height: [8, 24, 8],
+                height: [8, 28, 8],
               }}
               transition={{
                 duration: 0.8,
