@@ -6,9 +6,10 @@ import { useAuth } from "@/context/AuthProvider";
 
 interface HeaderBarProps {
   onCallClick: () => void;
+  onTopupClick: () => void;
 }
 
-export function HeaderBar({ onCallClick }: HeaderBarProps) {
+export function HeaderBar({ onCallClick, onTopupClick }: HeaderBarProps) {
   const { isAuthenticated } = useAuth();
   return (
     <header
@@ -49,7 +50,7 @@ export function HeaderBar({ onCallClick }: HeaderBarProps) {
               <Phone className="w-5 h-5" style={{ color: "var(--accent)" }} />
             </button>
           )}
-          <UserProfile />
+          <UserProfile onTopupClick={onTopupClick} />
         </div>
       </div>
     </header>

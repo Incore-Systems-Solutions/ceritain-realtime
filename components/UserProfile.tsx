@@ -4,9 +4,13 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthProvider";
 import { authApi } from "@/lib/auth-api";
-import { User, Coins, LogOut, Loader2 } from "lucide-react";
+import { User, Coins, LogOut, Loader2, Plus } from "lucide-react";
 
-export function UserProfile() {
+interface UserProfileProps {
+  onTopupClick: () => void;
+}
+
+export function UserProfile({ onTopupClick }: UserProfileProps) {
   const { user, token, logout } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
@@ -34,6 +38,22 @@ export function UserProfile() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showMenu, token, tokenBalance]);
+
+  // Listen for token balance refresh event
+  useEffect(() => {
+    const handleRefresh = () => {
+      setTokenBalance(null);
+      if (token) {
+        fetchToken();
+      }
+    };
+
+    window.addEventListener("refreshTokenBalance", handleRefresh);
+    return () => {
+      window.removeEventListener("refreshTokenBalance", handleRefresh);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   if (!user) return null;
 
@@ -81,24 +101,38 @@ export function UserProfile() {
                 </div>
 
                 {/* Token Balance */}
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Coins className="w-5 h-5 text-yellow-500" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Token Balance
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    {loadingToken ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                    ) : (
-                      <span className="text-lg font-bold text-gray-900 dark:text-white">
-                        {tokenBalance !== null
-                          ? tokenBalance.toLocaleString()
-                          : "-"}
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Coins className="w-5 h-5 text-yellow-500" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Token Balance
                       </span>
-                    )}
+                    </div>
+                    <div className="text-right">
+                      {loadingToken ? (
+                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                      ) : (
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          {tokenBalance !== null
+                            ? tokenBalance.toLocaleString()
+                            : "-"}
+                        </span>
+                      )}
+                    </div>
                   </div>
+
+                  {/* Topup Button */}
+                  <button
+                    onClick={() => {
+                      onTopupClick();
+                      setShowMenu(false);
+                    }}
+                    className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Topup Token
+                  </button>
                 </div>
               </div>
 

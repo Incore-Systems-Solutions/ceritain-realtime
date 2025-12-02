@@ -9,6 +9,7 @@ import { InputBar } from "./InputBar";
 import { CallPage } from "./CallPage";
 import { LoginModal } from "./LoginModal";
 import { OTPModal } from "./OTPModal";
+import { TopupModal } from "./TopupModal";
 import { useChat } from "@/hooks/useChat";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -19,6 +20,7 @@ export function ChatPage() {
   const [isCallActive, setIsCallActive] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
+  const [showTopupModal, setShowTopupModal] = useState(false);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -63,7 +65,10 @@ export function ChatPage() {
       {/* Chat Interface */}
       {!isCallActive && (
         <div className="flex flex-col h-screen">
-          <HeaderBar onCallClick={handleCallClick} />
+          <HeaderBar
+            onCallClick={handleCallClick}
+            onTopupClick={() => setShowTopupModal(true)}
+          />
 
           {/* Chat Area */}
           <div
@@ -166,6 +171,20 @@ export function ChatPage() {
       <AnimatePresence>
         {isCallActive && (
           <CallPage onEndCall={handleEndCall} contactName="AI Assistant" />
+        )}
+      </AnimatePresence>
+
+      {/* Topup Modal */}
+      <AnimatePresence>
+        {showTopupModal && (
+          <TopupModal
+            onClose={() => setShowTopupModal(false)}
+            onSuccess={() => {
+              setShowTopupModal(false);
+              // Trigger token balance refresh in UserProfile
+              window.dispatchEvent(new Event("refreshTokenBalance"));
+            }}
+          />
         )}
       </AnimatePresence>
     </>
