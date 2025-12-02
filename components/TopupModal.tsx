@@ -74,8 +74,17 @@ export function TopupModal({ onClose, onSuccess }: TopupModalProps) {
         setOrderId(response.result.order_id);
         setExpiredAt(response.result.expired_at);
 
-        // Open payment URL in new window
-        window.open(paymentUrl, "_blank", "noopener,noreferrer");
+        // Open payment URL in popup window (like DigitalOcean)
+        const width = 600;
+        const height = 700;
+        const left = window.screen.width / 2 - width / 2;
+        const top = window.screen.height / 2 - height / 2;
+
+        window.open(
+          paymentUrl,
+          "PaymentWindow",
+          `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+        );
 
         setStep("success");
         onSuccess();
