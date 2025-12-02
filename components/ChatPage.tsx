@@ -7,12 +7,18 @@ import { HeaderBar } from "./HeaderBar";
 import { ChatBubble } from "./ChatBubble";
 import { InputBar } from "./InputBar";
 import { CallPage } from "./CallPage";
+import { LoginModal } from "./LoginModal";
+import { OTPModal } from "./OTPModal";
 import { useChat } from "@/hooks/useChat";
+import { useAuth } from "@/context/AuthProvider";
 
 export function ChatPage() {
-  const { messages, isTyping, sendMessage } = useChat();
+  const { messages, isTyping, sendMessage, isInitialized } = useChat();
+  const { isAuthenticated } = useAuth();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isCallActive, setIsCallActive] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -34,6 +40,26 @@ export function ChatPage() {
 
   return (
     <>
+      {/* Login Modals */}
+      {!isAuthenticated && !showOTPModal && (
+        <LoginModal
+          onSuccess={(email) => {
+            setLoginEmail(email);
+            setShowOTPModal(true);
+          }}
+        />
+      )}
+
+      {!isAuthenticated && showOTPModal && (
+        <OTPModal
+          email={loginEmail}
+          onBack={() => {
+            setShowOTPModal(false);
+            setLoginEmail("");
+          }}
+        />
+      )}
+
       {/* Chat Interface */}
       {!isCallActive && (
         <div className="flex flex-col h-screen">
@@ -49,8 +75,29 @@ export function ChatPage() {
             }}
           >
             <div className="max-w-4xl mx-auto">
+              {/* Loading State */}
+              {isAuthenticated && !isInitialized && messages.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-4"
+                >
+                  <Loader2
+                    className="w-12 h-12 animate-spin mb-4"
+                    style={{ color: "var(--accent)" }}
+                  />
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--foreground-secondary)" }}
+                  >
+                    Mempersiapkan percakapan...
+                  </p>
+                </motion.div>
+              )}
+
               {/* Empty State */}
-              {messages.length === 0 && (
+              {messages.length === 0 && isInitialized && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
