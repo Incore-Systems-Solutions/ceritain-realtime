@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { setupAISpeakingDetection } from "@/lib/realtime-api";
 
 export type ConnectionStatus =
   | "idle"
@@ -14,14 +15,37 @@ export interface RealtimeWebRTCState {
   aiResponse: string;
   isMuted: boolean;
   audioLevel: number;
+  isUserSpeaking: boolean;
+}
+
+/**
+ * Callbacks for speaking events
+ */
+export interface SpeakingCallbacks {
+  onUserSpeakingStart?: () => void;
+  onUserSpeakingStop?: (duration: number) => void;
+  onAISpeakingStart?: () => void;
+  onAISpeakingStop?: (duration: number) => void;
 }
 
 export interface RealtimeWebRTCActions {
-  connect: (token: string) => Promise<void>;
+  connect: (token: string, callbacks?: SpeakingCallbacks) => Promise<void>;
   disconnect: () => void;
   toggleMute: () => void;
   setMuted: (muted: boolean) => void;
 }
+
+/**
+ * Voice Activity Detection (VAD) configuration
+ */
+const VAD_CONFIG = {
+  // Audio energy threshold (0-1). Above this = user is speaking
+  ENERGY_THRESHOLD: 0.02,
+  // Minimum duration to consider as speaking (ms)
+  MIN_SPEAKING_DURATION: 300,
+  // Silence duration to consider speaking stopped (ms)
+  SILENCE_DURATION: 1500,
+};
 
 export function useRealtimeWebRTC(): [
   RealtimeWebRTCState,
@@ -33,6 +57,7 @@ export function useRealtimeWebRTC(): [
   const [aiResponse, setAiResponse] = useState("");
   const [isMuted, setIsMuted] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
 
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
@@ -41,7 +66,74 @@ export function useRealtimeWebRTC(): [
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Monitor audio level
+  // VAD state
+  const userSpeakingStartTimeRef = useRef<number | null>(null);
+  const lastSoundTimeRef = useRef<number>(0);
+  const speakingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const callbacksRef = useRef<SpeakingCallbacks>({});
+  const aiSpeakingCleanupRef = useRef<(() => void) | null>(null);
+
+  /**
+   * Voice Activity Detection
+   * Monitors audio level and detects when user starts/stops speaking
+   */
+  const checkVoiceActivity = useCallback(
+    (audioLevel: number) => {
+      const now = Date.now();
+      const isSpeaking = audioLevel > VAD_CONFIG.ENERGY_THRESHOLD;
+
+      if (isSpeaking) {
+        lastSoundTimeRef.current = now;
+
+        // User started speaking
+        if (!isUserSpeaking && !userSpeakingStartTimeRef.current) {
+          const timeSinceLastSound = now - lastSoundTimeRef.current;
+
+          if (timeSinceLastSound < VAD_CONFIG.MIN_SPEAKING_DURATION) {
+            return; // Too short, might be noise
+          }
+
+          setIsUserSpeaking(true);
+          userSpeakingStartTimeRef.current = now;
+          console.log("🎤 User started speaking");
+          callbacksRef.current.onUserSpeakingStart?.();
+        }
+
+        // Clear any pending stop timeout
+        if (speakingTimeoutRef.current) {
+          clearTimeout(speakingTimeoutRef.current);
+          speakingTimeoutRef.current = null;
+        }
+      } else {
+        // Check if user stopped speaking
+        if (isUserSpeaking && userSpeakingStartTimeRef.current) {
+          const silenceDuration = now - lastSoundTimeRef.current;
+
+          if (silenceDuration >= VAD_CONFIG.SILENCE_DURATION) {
+            // User stopped speaking
+            const speakingDuration = Math.round(
+              (now - userSpeakingStartTimeRef.current) / 1000
+            );
+
+            setIsUserSpeaking(false);
+            console.log(
+              `🎤 User stopped speaking. Duration: ${speakingDuration}s`
+            );
+
+            // Call callback with duration
+            callbacksRef.current.onUserSpeakingStop?.(speakingDuration);
+
+            userSpeakingStartTimeRef.current = null;
+          }
+        }
+      }
+    },
+    [isUserSpeaking]
+  );
+
+  /**
+   * Monitor audio level and detect voice activity
+   */
   const monitorAudioLevel = useCallback(() => {
     if (!analyserRef.current) return;
 
@@ -52,20 +144,41 @@ export function useRealtimeWebRTC(): [
 
       analyserRef.current.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-      setAudioLevel(average / 255);
+      const normalizedLevel = average / 255;
+
+      setAudioLevel(normalizedLevel);
+
+      // Check voice activity if not muted
+      if (!isMuted) {
+        checkVoiceActivity(normalizedLevel);
+      }
 
       animationFrameRef.current = requestAnimationFrame(checkLevel);
     };
 
     checkLevel();
-  }, []);
+  }, [isMuted, checkVoiceActivity]);
 
-  // Disconnect
+  /**
+   * Disconnect and cleanup all resources
+   */
   const disconnect = useCallback(() => {
     // Stop animation frame
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
+    }
+
+    // Clear speaking timeout
+    if (speakingTimeoutRef.current) {
+      clearTimeout(speakingTimeoutRef.current);
+      speakingTimeoutRef.current = null;
+    }
+
+    // Cleanup AI speaking detection
+    if (aiSpeakingCleanupRef.current) {
+      aiSpeakingCleanupRef.current();
+      aiSpeakingCleanupRef.current = null;
     }
 
     // Close data channel
@@ -93,15 +206,24 @@ export function useRealtimeWebRTC(): [
     }
 
     analyserRef.current = null;
+    userSpeakingStartTimeRef.current = null;
+    setIsUserSpeaking(false);
     setStatus("disconnected");
   }, []);
 
-  // Connect to WebRTC
+  /**
+   * Connect to WebRTC with speaker detection
+   */
   const connect = useCallback(
-    async (token: string) => {
+    async (token: string, callbacks?: SpeakingCallbacks) => {
       try {
         setStatus("connecting");
         setError(null);
+
+        // Store callbacks
+        if (callbacks) {
+          callbacksRef.current = callbacks;
+        }
 
         // Create peer connection
         const pc = new RTCPeerConnection();
@@ -130,7 +252,7 @@ export function useRealtimeWebRTC(): [
         // Ensure we can receive audio from the model
         pc.addTransceiver("audio", { direction: "recvonly" });
 
-        // Setup audio context for visualization
+        // Setup audio context for visualization and VAD
         audioContextRef.current = new AudioContext();
         analyserRef.current = audioContextRef.current.createAnalyser();
         analyserRef.current.fftSize = 256;
@@ -172,13 +294,19 @@ export function useRealtimeWebRTC(): [
           setError("Data channel error occurred");
         };
 
+        // Setup AI speaking detection
+        aiSpeakingCleanupRef.current = setupAISpeakingDetection(dataChannel, {
+          onAISpeakingStart: callbacks?.onAISpeakingStart,
+          onAISpeakingStop: callbacks?.onAISpeakingStop,
+        });
+
         // Create and set local description
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
 
         // Send SDP offer to OpenAI Realtime WebRTC endpoint
         console.log("Using token:", token.substring(0, 20) + "...");
-        const model = "gpt-realtime-mini-2025-10-06";
+        const model = "gpt-4o-realtime-preview-2024-12-17";
         const sdpResp = await fetch(
           `https://api.openai.com/v1/realtime?model=${encodeURIComponent(
             model
@@ -207,12 +335,6 @@ export function useRealtimeWebRTC(): [
         console.log("Remote description set successfully");
       } catch (err) {
         console.error("WebRTC connection error:", err);
-        const errorObj = err as unknown;
-        // console.error("Error details:", {
-        //   name: errorObj?.name,
-        //   message: errorObj?.message,
-        //   stack: errorObj?.stack,
-        // });
         setStatus("error");
         setError(
           err instanceof Error
@@ -225,7 +347,9 @@ export function useRealtimeWebRTC(): [
     [disconnect, monitorAudioLevel]
   );
 
-  // Toggle mute
+  /**
+   * Toggle mute state
+   */
   const toggleMute = useCallback(() => {
     if (audioStreamRef.current) {
       const audioTrack = audioStreamRef.current.getAudioTracks()[0];
@@ -236,7 +360,9 @@ export function useRealtimeWebRTC(): [
     }
   }, []);
 
-  // Set muted state
+  /**
+   * Set muted state
+   */
   const setMutedState = useCallback((muted: boolean) => {
     if (audioStreamRef.current) {
       const audioTrack = audioStreamRef.current.getAudioTracks()[0];
@@ -262,6 +388,7 @@ export function useRealtimeWebRTC(): [
       aiResponse,
       isMuted,
       audioLevel,
+      isUserSpeaking,
     },
     {
       connect,

@@ -34,6 +34,15 @@ export interface TokenResponse {
   result?: number;
 }
 
+/**
+ * Response interface for token usage API
+ */
+export interface TokenUsageResponse {
+  errorCode: number;
+  message: string;
+  result?: unknown;
+}
+
 export const authApi = {
   async requestOTP(email: string): Promise<RequestOTPResponse> {
     const response = await fetch(`${API_BASE_URL}/api/auth/login-v2`, {
@@ -90,5 +99,81 @@ export const authApi = {
     }
 
     return data;
+  },
+
+  /**
+   * Post token usage for user speaking duration
+   * @param token - Auth token
+   * @param time - Duration in seconds
+   * @returns Response with status code
+   * @throws Error with status code if request fails
+   */
+  async postTokenUsageUser(
+    token: string,
+    time: number
+  ): Promise<TokenUsageResponse> {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/realtime/token-usage-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ time }),
+        }
+      );
+
+      const data = await response.json();
+
+      // Return response with status code for caller to handle
+      return {
+        errorCode: response.status === 400 ? 400 : data.errorCode,
+        message: data.message || "",
+        result: data.result,
+      };
+    } catch (error) {
+      console.error("Failed to post token usage (user):", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Post token usage for AI speaking duration
+   * @param token - Auth token
+   * @param time - Duration in seconds
+   * @returns Response with status code
+   * @throws Error with status code if request fails
+   */
+  async postTokenUsageAI(
+    token: string,
+    time: number
+  ): Promise<TokenUsageResponse> {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/realtime/token-usage-ai`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ time }),
+        }
+      );
+
+      const data = await response.json();
+
+      // Return response with status code for caller to handle
+      return {
+        errorCode: response.status === 400 ? 400 : data.errorCode,
+        message: data.message || "",
+        result: data.result,
+      };
+    } catch (error) {
+      console.error("Failed to post token usage (AI):", error);
+      throw error;
+    }
   },
 };

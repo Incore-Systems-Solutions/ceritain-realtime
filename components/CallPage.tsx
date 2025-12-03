@@ -10,9 +10,12 @@ import {
   VolumeX,
   AlertCircle,
   RefreshCw,
+  Coins,
 } from "lucide-react";
 import { useRealtimeWebRTC } from "@/hooks/useRealtimeWebRTC";
 import { createRealtimeSession } from "@/lib/realtime-api";
+import { authApi } from "@/lib/auth-api";
+import { useAuth } from "@/context/AuthProvider";
 
 interface CallPageProps {
   onEndCall: () => void;
@@ -25,6 +28,7 @@ export function CallPage({
   contactName = "Psikolog AI",
   contactAvatar,
 }: CallPageProps) {
+  const { token } = useAuth();
   const [callDuration, setCallDuration] = useState(0);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [showError, setShowError] = useState(false);
@@ -33,8 +37,59 @@ export function CallPage({
     "prompt" | "granted" | "denied"
   >("prompt");
   const [showMicPrompt, setShowMicPrompt] = useState(false);
+  const [showTokenModal, setShowTokenModal] = useState(false);
 
   const [webrtcState, webrtcActions] = useRealtimeWebRTC();
+
+  /**
+   * Handle user stopped speaking - send token usage to API
+   */
+  const handleUserSpeakingStop = async (duration: number) => {
+    if (!token || duration <= 0) return;
+
+    try {
+      console.log(`📊 Sending user token usage: ${duration}s`);
+      const response = await authApi.postTokenUsageUser(
+        token as string,
+        duration
+      );
+
+      // Check if token is depleted (400 Bad Request)
+      if (response.errorCode === 400) {
+        console.warn("⚠️ Token depleted (user speaking)");
+        setShowTokenModal(true);
+        // Disconnect call
+        webrtcActions.disconnect();
+      }
+    } catch (error) {
+      console.error("Failed to post user token usage:", error);
+    }
+  };
+
+  /**
+   * Handle AI stopped speaking - send token usage to API
+   */
+  const handleAISpeakingStop = async (duration: number) => {
+    if (!token || duration <= 0) return;
+
+    try {
+      console.log(`📊 Sending AI token usage: ${duration}s`);
+      const response = await authApi.postTokenUsageAI(
+        token as string,
+        duration
+      );
+
+      // Check if token is depleted (400 Bad Request)
+      if (response.errorCode === 400) {
+        console.warn("⚠️ Token depleted (AI speaking)");
+        setShowTokenModal(true);
+        // Disconnect call
+        webrtcActions.disconnect();
+      }
+    } catch (error) {
+      console.error("Failed to post AI token usage:", error);
+    }
+  };
 
   // Check microphone permission first
   useEffect(() => {
@@ -72,19 +127,31 @@ export function CallPage({
 
       try {
         // Create session and get token
-        const token = await createRealtimeSession({
-          prompt:
-            "jadi seorang psikolog yang membantu menyelesaikan masalah user",
-          voice: "alloy",
-        });
+        const sessionToken = await createRealtimeSession(
+          {
+            prompt:
+              "jadi seorang psikolog yang membantu menyelesaikan masalah user",
+            voice: "alloy",
+          },
+          token || undefined // Pass auth token for authorization
+        );
 
         if (!mounted) return;
 
-        console.log("Token received:", token);
+        console.log("Token received:", sessionToken);
         console.log("Connecting WebRTC...");
 
-        // Connect WebRTC with token
-        await webrtcActions.connect(token);
+        // Connect WebRTC with token and speaking callbacks
+        await webrtcActions.connect(sessionToken, {
+          onUserSpeakingStart: () => {
+            console.log("🎤 User speaking started");
+          },
+          onUserSpeakingStop: handleUserSpeakingStop,
+          onAISpeakingStart: () => {
+            console.log("🤖 AI speaking started");
+          },
+          onAISpeakingStop: handleAISpeakingStop,
+        });
       } catch (error) {
         console.error("Failed to initialize call:", error);
         if (mounted) {
@@ -153,13 +220,19 @@ export function CallPage({
       // Wait a bit
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const token = await createRealtimeSession({
-        prompt:
-          "jadi seorang psikolog yang membantu menyelesaikan masalah user",
-        voice: "alloy",
-      });
+      const sessionToken = await createRealtimeSession(
+        {
+          prompt:
+            "jadi seorang psikolog yang membantu menyelesaikan masalah user",
+          voice: "alloy",
+        },
+        token || undefined // Pass auth token for authorization
+      );
 
-      await webrtcActions.connect(token);
+      await webrtcActions.connect(sessionToken, {
+        onUserSpeakingStop: handleUserSpeakingStop,
+        onAISpeakingStop: handleAISpeakingStop,
+      });
     } catch (error) {
       console.error("Retry failed:", error);
       setShowError(true);
@@ -238,6 +311,18 @@ export function CallPage({
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
+
+            {/* User speaking indicator */}
+            {webrtcState.isUserSpeaking && (
+              <motion.div
+                className="absolute -top-2 -left-2 w-8 h-8 bg-blue-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
+                <Mic className="w-4 h-4 text-white" />
+              </motion.div>
+            )}
           </motion.div>
 
           {/* Contact Name & Status */}
@@ -270,38 +355,6 @@ export function CallPage({
               >
                 {formatDuration(callDuration)}
               </motion.p>
-            )}
-
-            {/* Transcript Display */}
-            {webrtcState.transcript && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-6 max-w-md px-6 py-4 bg-white/90 backdrop-blur-md rounded-3xl shadow-lg"
-              >
-                <p className="text-sm text-gray-600 font-semibold mb-1">
-                  Anda:
-                </p>
-                <p className="text-gray-900 font-medium">
-                  {webrtcState.transcript}
-                </p>
-              </motion.div>
-            )}
-
-            {/* AI Response Display */}
-            {webrtcState.aiResponse && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 max-w-md px-6 py-4 bg-gradient-to-br from-blue-500 to-purple-600 backdrop-blur-md rounded-3xl shadow-lg"
-              >
-                <p className="text-sm text-white/90 font-semibold mb-1">
-                  Psikolog AI:
-                </p>
-                <p className="text-white font-medium">
-                  {webrtcState.aiResponse}
-                </p>
-              </motion.div>
             )}
           </motion.div>
         </div>
@@ -458,9 +511,59 @@ export function CallPage({
         )}
       </AnimatePresence>
 
+      {/* Token Depleted Modal */}
+      <AnimatePresence>
+        {showTokenModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex items-center justify-center p-6 z-10"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0.2 }}
+              className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg">
+                  <Coins className="w-10 h-10 text-white" strokeWidth={2.5} />
+                </div>
+              </div>
+
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Token Kamu Udah Habis!
+                </h3>
+                <p className="text-gray-600 text-base leading-relaxed">
+                  Token kamu udah habis nih. Yuk topup dulu biar bisa lanjut
+                  ngobrol sama AI Buddy!
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleEndCall}
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+                >
+                  <Coins className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  <span className="text-white font-semibold">
+                    Oke, Topup Sekarang
+                  </span>
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Error Modal */}
       <AnimatePresence>
-        {(showError || webrtcState.error) && (
+        {(showError || webrtcState.error) && !showTokenModal && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -485,7 +588,7 @@ export function CallPage({
 
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  Oops, Ada Kendala Nih!
+                  Oops, Ada Kendala Nih! 😅
                 </h3>
                 <p className="text-gray-600 text-base leading-relaxed">
                   {micPermission === "denied"
