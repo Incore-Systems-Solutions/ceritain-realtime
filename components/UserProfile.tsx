@@ -61,13 +61,10 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
     <div className="relative">
       <button
         onClick={() => setShowMenu(!showMenu)}
-        className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
-        style={{
-          backgroundColor: "var(--surface-elevated)",
-        }}
+        className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
         aria-label="User menu"
       >
-        <User className="w-5 h-5" style={{ color: "var(--accent)" }} />
+        <User className="w-5 h-5 text-white" strokeWidth={2.5} />
       </button>
 
       <AnimatePresence>
@@ -81,39 +78,41 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
               initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800 z-20 overflow-hidden"
+              transition={{ duration: 0.2, type: "spring" }}
+              className="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-xl rounded-[24px] shadow-2xl border border-white/50 z-20 overflow-hidden"
             >
               {/* User Info */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center">
-                    <User className="w-6 h-6 text-white" />
+              <div className="p-5 bg-gradient-to-br from-blue-50 to-purple-50">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg">
+                    <User className="w-7 h-7 text-white" strokeWidth={2.5} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 dark:text-white truncate">
+                    <p className="font-bold text-gray-900 truncate text-base">
                       {user.name || "User"}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-xs text-gray-600 truncate font-medium">
                       {user.email}
                     </p>
                   </div>
                 </div>
 
                 {/* Token Balance */}
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-md">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Coins className="w-5 h-5 text-yellow-500" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                        <Coins className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-semibold text-gray-700">
                         Token Balance
                       </span>
                     </div>
                     <div className="text-right">
                       {loadingToken ? (
-                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                        <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
                       ) : (
-                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                        <span className="text-xl font-bold text-gray-900">
                           {tokenBalance !== null
                             ? tokenBalance.toLocaleString()
                             : "-"}
@@ -128,9 +127,9 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
                       onTopupClick();
                       setShowMenu(false);
                     }}
-                    className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-4 h-4" strokeWidth={2.5} />
                     Topup Token
                   </button>
                 </div>
@@ -142,10 +141,12 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
                   logout();
                   setShowMenu(false);
                 }}
-                className="w-full px-4 py-3 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition flex items-center gap-3"
+                className="w-full px-5 py-4 text-left text-red-600 hover:bg-red-50 transition-all flex items-center gap-3 font-semibold"
               >
-                <LogOut className="w-5 h-5" />
-                <span className="font-medium">Keluar</span>
+                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                  <LogOut className="w-5 h-5 text-red-600" strokeWidth={2.5} />
+                </div>
+                <span>Keluar</span>
               </button>
             </motion.div>
           </>

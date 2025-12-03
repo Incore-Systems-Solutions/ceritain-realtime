@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { authApi } from "@/lib/auth-api";
-import { Mail, MessageCircle } from "lucide-react";
+import { Mail, Rocket } from "lucide-react";
 
 interface LoginModalProps {
   onSuccess: (email: string) => void;
@@ -39,13 +39,13 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex items-center justify-center z-50 p-4"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
-        className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8 border border-gray-200 dark:border-gray-800"
+        className="relative bg-white/95 backdrop-blur-sm rounded-[32px] shadow-2xl w-full max-w-md p-10"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -53,8 +53,28 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
           transition={{ delay: 0.1, type: "spring", duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <div className="w-16 h-16 bg-blue-500 dark:bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <MessageCircle className="w-8 h-8 text-white" strokeWidth={2} />
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-[24px] flex items-center justify-center shadow-lg">
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 48 48"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M24 4C12.96 4 4 11.84 4 21.6C4 26.32 6.08 30.56 9.52 33.68C9.28 37.04 7.6 40.08 7.44 40.4C7.2 40.88 7.28 41.44 7.6 41.84C7.92 42.24 8.48 42.4 8.96 42.24C13.6 40.72 17.12 38.56 19.2 37.12C20.72 37.52 22.32 37.76 24 37.76C35.04 37.76 44 29.92 44 20.16C44 10.4 35.04 4 24 4Z"
+                fill="white"
+              />
+              <circle cx="16" cy="20" r="2.5" fill="#3B82F6" />
+              <circle cx="24" cy="20" r="2.5" fill="#3B82F6" />
+              <circle cx="32" cy="20" r="2.5" fill="#3B82F6" />
+              <path
+                d="M16 26C16 26 18.5 29 24 29C29.5 29 32 26 32 26"
+                stroke="#3B82F6"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
         </motion.div>
 
@@ -64,12 +84,12 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Selamat Datang
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            Welcome Back 💙
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
-            Masukin email kamu buat lanjut, biar kita bisa ngobrol bareng dan
-            seru!
+          <p className="text-gray-600 text-base leading-relaxed px-2">
+            Tempat aman buat cerita & ngeluarin isi kepala. Kamu nggak sendirian
+            di sini
           </p>
         </motion.div>
 
@@ -83,19 +103,19 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              className="block text-sm font-semibold text-gray-700 mb-3"
             >
-              Email
+              Email kamu
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-blue-400 focus:bg-white transition-all"
                 disabled={loading}
                 autoFocus
               />
@@ -108,7 +128,7 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm"
+                className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm"
               >
                 {error}
               </motion.div>
@@ -118,9 +138,9 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
           <motion.button
             type="submit"
             disabled={loading}
-            whileHover={{ scale: loading ? 1 : 1.01 }}
-            whileTap={{ scale: loading ? 1 : 0.99 }}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center shadow-sm"
+            whileHover={{ scale: loading ? 1 : 1.02 }}
+            whileTap={{ scale: loading ? 1 : 0.98 }}
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold py-4 px-4 rounded-2xl transition-all flex items-center justify-center shadow-lg shadow-blue-500/30"
           >
             {loading ? (
               <>
@@ -147,7 +167,10 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
                 Mengirim kode...
               </>
             ) : (
-              "Kirim Kode OTP"
+              <>
+                Kirim Kode OTP
+                <Rocket className="w-5 h-5 ml-2" />
+              </>
             )}
           </motion.button>
         </motion.form>
@@ -158,8 +181,10 @@ export function LoginModal({ onSuccess }: LoginModalProps) {
           transition={{ delay: 0.4 }}
           className="mt-6 text-center"
         >
-          <p className="text-xs text-gray-500 dark:text-gray-500">
-            Kode OTP akan dikirim ke email kamu
+          <p className="text-sm text-gray-600 leading-relaxed">
+            Kode OTP akan dikirim ke email kamu.
+            <br />
+            Privasi kamu aman di sini.
           </p>
         </motion.div>
       </motion.div>

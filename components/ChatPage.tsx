@@ -63,8 +63,8 @@ export function ChatPage() {
       )}
 
       {/* Chat Interface */}
-      {!isCallActive && (
-        <div className="flex flex-col h-screen">
+      {!isCallActive && isAuthenticated && (
+        <div className="flex flex-col h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-300">
           <HeaderBar
             onCallClick={handleCallClick}
             onTopupClick={() => setShowTopupModal(true)}
@@ -73,11 +73,7 @@ export function ChatPage() {
           {/* Chat Area */}
           <div
             ref={chatContainerRef}
-            className="flex-1 overflow-y-auto px-4 py-6 pb-24"
-            style={{
-              background:
-                "linear-gradient(to bottom, var(--background), var(--surface))",
-            }}
+            className="flex-1 overflow-y-auto px-4 py-6 pb-32"
           >
             <div className="max-w-4xl mx-auto">
               {/* Loading State */}
@@ -88,14 +84,10 @@ export function ChatPage() {
                   transition={{ duration: 0.5 }}
                   className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-4"
                 >
-                  <Loader2
-                    className="w-12 h-12 animate-spin mb-4"
-                    style={{ color: "var(--accent)" }}
-                  />
-                  <p
-                    className="text-sm"
-                    style={{ color: "var(--foreground-secondary)" }}
-                  >
+                  <div className="w-20 h-20 bg-white/30 backdrop-blur-sm rounded-[24px] flex items-center justify-center shadow-lg mb-6">
+                    <Loader2 className="w-10 h-10 animate-spin text-white" />
+                  </div>
+                  <p className="text-base font-semibold text-white drop-shadow">
                     Mempersiapkan percakapan...
                   </p>
                 </motion.div>
@@ -109,28 +101,18 @@ export function ChatPage() {
                   transition={{ duration: 0.5 }}
                   className="flex flex-col items-center justify-center h-full min-h-[400px] text-center px-4"
                 >
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-lg"
-                    style={{
-                      backgroundColor: "var(--surface-elevated)",
-                    }}
-                  >
+                  <div className="w-16 h-16 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl mb-6">
                     <MessageCircle
-                      className="w-10 h-10"
-                      style={{ color: "var(--accent)" }}
+                      className="w-8 h-8 text-white"
+                      strokeWidth={2.5}
                     />
                   </div>
-                  <h2
-                    className="text-2xl font-semibold mb-2 tracking-tight"
-                    style={{ color: "var(--foreground)" }}
-                  >
-                    Start a Conversation AI
+                  <h2 className="text-2xl font-bold mb-3 text-white drop-shadow-lg">
+                    Mulai Percakapan 💬
                   </h2>
-                  <p
-                    className="text-sm max-w-md"
-                    style={{ color: "var(--foreground-secondary)" }}
-                  >
-                    Send a message to begin chatting with AI Assistant
+                  <p className="text-base text-white/90 max-w-md leading-relaxed drop-shadow">
+                    Kirim pesan untuk mulai ngobrol dengan AI Buddy yang siap
+                    dengerin kamu
                   </p>
                 </motion.div>
               )}
@@ -140,6 +122,19 @@ export function ChatPage() {
                 <ChatBubble key={message.id} message={message} />
               ))}
 
+              {/* Supportive Message */}
+              {messages.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center my-4"
+                >
+                  {/* <p className="text-white/80 text-sm font-medium drop-shadow">
+                    ✨ You&apos;re doing great
+                  </p> */}
+                </motion.div>
+              )}
+
               {/* Typing Indicator */}
               {isTyping && (
                 <motion.div
@@ -148,15 +143,11 @@ export function ChatPage() {
                   exit={{ opacity: 0, y: 10 }}
                   className="flex justify-start mb-4"
                 >
-                  <div
-                    className="max-w-[75%] rounded-2xl rounded-bl-md px-4 py-3 shadow-sm flex items-center gap-2"
-                    style={{
-                      backgroundColor: "var(--ai-bubble-bg)",
-                      color: "var(--ai-bubble-text)",
-                    }}
-                  >
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-[15px]">AI is typing...</span>
+                  <div className="max-w-[75%] rounded-3xl rounded-tl-lg px-5 py-3 bg-white/95 backdrop-blur-sm shadow-lg flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                    <span className="text-[15px] text-gray-700 font-medium">
+                      AI is typing...
+                    </span>
                   </div>
                 </motion.div>
               )}

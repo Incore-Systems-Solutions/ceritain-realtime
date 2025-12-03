@@ -92,19 +92,19 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex items-center justify-center z-50 p-4"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
-        className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8 border border-gray-200 dark:border-gray-800"
+        className="relative bg-white/95 backdrop-blur-sm rounded-[32px] shadow-2xl w-full max-w-md p-10"
       >
         <motion.button
           onClick={onBack}
           whileHover={{ x: -2 }}
           whileTap={{ scale: 0.95 }}
-          className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 mb-6 flex items-center text-sm font-medium transition-colors"
+          className="text-gray-600 hover:text-gray-900 mb-6 flex items-center text-sm font-semibold transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Kembali
@@ -116,8 +116,8 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
           transition={{ delay: 0.1, type: "spring", duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <div className="w-16 h-16 bg-green-500 dark:bg-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <Shield className="w-8 h-8 text-white" strokeWidth={2} />
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-[24px] flex items-center justify-center shadow-lg">
+            <Shield className="w-10 h-10 text-white" strokeWidth={2.5} />
           </div>
         </motion.div>
 
@@ -127,13 +127,13 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
           transition={{ delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
             Verifikasi Kode OTP
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
+          <p className="text-gray-600 text-base leading-relaxed mb-2">
             Kode verifikasi udah dikirim ke
           </p>
-          <div className="flex items-center justify-center gap-2 text-gray-900 dark:text-white font-medium text-sm">
+          <div className="flex items-center justify-center gap-2 text-gray-900 font-semibold text-sm bg-blue-50 py-2 px-4 rounded-xl inline-flex">
             <Mail className="w-4 h-4 text-blue-500" />
             {email}
           </div>
@@ -163,7 +163,7 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
-                className="w-12 h-14 text-center text-2xl font-bold rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-12 h-14 text-center text-2xl font-bold rounded-2xl border-2 border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:ring-0 focus:border-blue-400 focus:bg-white transition-all"
                 disabled={loading}
               />
             ))}
@@ -175,7 +175,7 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-3 rounded-lg text-sm text-center"
+                className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm text-center"
               >
                 {error}
               </motion.div>
@@ -186,10 +186,10 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
             type="submit"
             disabled={loading || otp.some((d) => !d)}
             whileHover={{
-              scale: loading || otp.some((d) => !d) ? 1 : 1.01,
+              scale: loading || otp.some((d) => !d) ? 1 : 1.02,
             }}
-            whileTap={{ scale: loading || otp.some((d) => !d) ? 1 : 0.99 }}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center shadow-sm"
+            whileTap={{ scale: loading || otp.some((d) => !d) ? 1 : 0.98 }}
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold py-4 px-4 rounded-2xl transition-all flex items-center justify-center shadow-lg shadow-blue-500/30"
           >
             {loading ? (
               <>
@@ -227,7 +227,7 @@ export function OTPModal({ email, onBack }: OTPModalProps) {
           transition={{ delay: 0.5 }}
           className="mt-6 text-center"
         >
-          <p className="text-xs text-gray-500 dark:text-gray-500">
+          <p className="text-sm text-gray-600 leading-relaxed">
             Cek inbox atau folder spam email kamu
           </p>
         </motion.div>

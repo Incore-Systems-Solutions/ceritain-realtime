@@ -27,30 +27,30 @@ export function useChat() {
   const initializeStory = async () => {
     if (!token) return;
 
-    try {
-      const response = await storyApi.initStory(token);
+    // try {
+    //   const response = await storyApi.initStory(token);
 
-      if (response.errorCode === 0 && response.result) {
-        const { initId: newInitId, response: aiResponse } = response.result;
+    //   if (response.errorCode === 0 && response.result) {
+    //     const { initId: newInitId, response: aiResponse } = response.result;
 
-        // Save initId to state and localStorage
-        setInitId(newInitId);
-        localStorage.setItem("story_init_id", newInitId);
+    //     // Save initId to state and localStorage
+    //     setInitId(newInitId);
+    //     localStorage.setItem("story_init_id", newInitId);
 
-        // Add AI's initial message
-        const aiMessage: Message = {
-          id: `ai-${response.result.id}`,
-          text: aiResponse,
-          sender: "ai",
-          timestamp: new Date(response.result.createdAt),
-        };
+    //     // Add AI's initial message
+    //     const aiMessage: Message = {
+    //       id: `ai-${response.result.id}`,
+    //       text: aiResponse,
+    //       sender: "ai",
+    //       timestamp: new Date(response.result.createdAt),
+    //     };
 
-        setMessages([aiMessage]);
-        setIsInitialized(true);
-      }
-    } catch (error) {
-      console.error("Failed to initialize story:", error);
-    }
+    //     setMessages([aiMessage]);
+    //     setIsInitialized(true);
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to initialize story:", error);
+    // }
   };
 
   // Initialize story when user is authenticated

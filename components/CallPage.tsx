@@ -190,14 +190,11 @@ export function CallPage({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50"
-      style={{
-        background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-      }}
+      className="fixed inset-0 z-50 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-300"
     >
       {/* Subtle Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.3),transparent_50%)]" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.5),transparent_50%)]" />
       </div>
 
       {/* Main Content */}
@@ -211,10 +208,8 @@ export function CallPage({
             transition={{ duration: 0.5 }}
             className="relative"
           >
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-2xl ring-4 ring-white/10">
-              <span className="text-white text-5xl font-bold">
-                {contactAvatar || "AI"}
-              </span>
+            <div className="w-32 h-32 rounded-[32px] bg-white/30 backdrop-blur-sm flex items-center justify-center shadow-2xl">
+              <span className="text-6xl">{contactAvatar || "😊"}</span>
             </div>
 
             {/* Pulse rings for connecting state */}
@@ -222,13 +217,13 @@ export function CallPage({
               webrtcState.status === "idle") && (
               <>
                 <motion.div
-                  className="absolute inset-0 rounded-full border-4 border-blue-400/30"
-                  animate={{ scale: [1, 1.4, 1.4], opacity: [0.6, 0, 0] }}
+                  className="absolute inset-0 rounded-[32px] border-4 border-white/40"
+                  animate={{ scale: [1, 1.3, 1.3], opacity: [0.6, 0, 0] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />
                 <motion.div
-                  className="absolute inset-0 rounded-full border-4 border-blue-400/30"
-                  animate={{ scale: [1, 1.6, 1.6], opacity: [0.6, 0, 0] }}
+                  className="absolute inset-0 rounded-[32px] border-4 border-white/40"
+                  animate={{ scale: [1, 1.5, 1.5], opacity: [0.6, 0, 0] }}
                   transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                 />
               </>
@@ -237,7 +232,7 @@ export function CallPage({
             {/* Active indicator for connected state */}
             {webrtcState.status === "connected" && (
               <motion.div
-                className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-slate-900"
+                className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-lg"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
@@ -252,7 +247,7 @@ export function CallPage({
             transition={{ delay: 0.2 }}
             className="text-center"
           >
-            <h1 className="text-4xl font-semibold text-white mb-3 tracking-tight">
+            <h1 className="text-4xl font-bold text-white mb-3 tracking-tight drop-shadow-lg">
               {contactName}
             </h1>
             <AnimatePresence mode="wait">
@@ -261,7 +256,7 @@ export function CallPage({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="text-lg text-white/70"
+                className="text-lg text-white/90 font-medium drop-shadow"
               >
                 {getStatusText()}
               </motion.p>
@@ -271,7 +266,7 @@ export function CallPage({
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-lg text-white/50 font-mono mt-1"
+                className="text-lg text-white/80 font-mono mt-1 drop-shadow"
               >
                 {formatDuration(callDuration)}
               </motion.p>
@@ -282,10 +277,14 @@ export function CallPage({
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 max-w-md px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl"
+                className="mt-6 max-w-md px-6 py-4 bg-white/90 backdrop-blur-md rounded-3xl shadow-lg"
               >
-                <p className="text-sm text-white/60 mb-1">Anda:</p>
-                <p className="text-white">{webrtcState.transcript}</p>
+                <p className="text-sm text-gray-600 font-semibold mb-1">
+                  Anda:
+                </p>
+                <p className="text-gray-900 font-medium">
+                  {webrtcState.transcript}
+                </p>
               </motion.div>
             )}
 
@@ -294,10 +293,14 @@ export function CallPage({
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 max-w-md px-6 py-3 bg-blue-500/20 backdrop-blur-md rounded-2xl border border-blue-400/30"
+                className="mt-4 max-w-md px-6 py-4 bg-gradient-to-br from-blue-500 to-purple-600 backdrop-blur-md rounded-3xl shadow-lg"
               >
-                <p className="text-sm text-blue-300 mb-1">Psikolog AI:</p>
-                <p className="text-white">{webrtcState.aiResponse}</p>
+                <p className="text-sm text-white/90 font-semibold mb-1">
+                  Psikolog AI:
+                </p>
+                <p className="text-white font-medium">
+                  {webrtcState.aiResponse}
+                </p>
               </motion.div>
             )}
           </motion.div>
@@ -318,10 +321,10 @@ export function CallPage({
               whileTap={{ scale: 0.95 }}
               onClick={webrtcActions.toggleMute}
               disabled={webrtcState.status !== "connected"}
-              className={`w-14 h-14 rounded-full transition-all shadow-lg ${
+              className={`w-16 h-16 rounded-2xl transition-all shadow-xl ${
                 webrtcState.isMuted
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-white/10 hover:bg-white/20 backdrop-blur-md"
+                  : "bg-white/30 hover:bg-white/40 backdrop-blur-md"
               } disabled:opacity-50 disabled:cursor-not-allowed`}
               aria-label={webrtcState.isMuted ? "Unmute" : "Mute"}
             >
@@ -337,10 +340,10 @@ export function CallPage({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsSpeakerOn(!isSpeakerOn)}
-              className={`w-14 h-14 rounded-full transition-all shadow-lg ${
+              className={`w-16 h-16 rounded-2xl transition-all shadow-xl ${
                 !isSpeakerOn
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-white/10 hover:bg-white/20 backdrop-blur-md"
+                  : "bg-white/30 hover:bg-white/40 backdrop-blur-md"
               }`}
               aria-label={isSpeakerOn ? "Turn off speaker" : "Turn on speaker"}
             >
@@ -357,11 +360,11 @@ export function CallPage({
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleEndCall}
-            className="w-full py-4 rounded-full bg-red-500 hover:bg-red-600 transition-all shadow-2xl flex items-center justify-center gap-3"
+            className="w-full py-5 rounded-3xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 transition-all shadow-2xl flex items-center justify-center gap-3"
             aria-label="End call"
           >
-            <PhoneOff className="w-6 h-6 text-white" />
-            <span className="text-white font-semibold text-lg">
+            <PhoneOff className="w-6 h-6 text-white" strokeWidth={2.5} />
+            <span className="text-white font-bold text-lg">
               Akhiri Panggilan
             </span>
           </motion.button>
@@ -403,38 +406,41 @@ export function CallPage({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-10"
+            className="absolute inset-0 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex items-center justify-center p-6 z-10"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-blue-500/20"
+              transition={{ type: "spring", bounce: 0.2 }}
+              className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 max-w-md w-full shadow-2xl"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Mic className="w-6 h-6 text-blue-500" />
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center shadow-lg">
+                  <Mic className="w-10 h-10 text-white" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-xl font-semibold text-white">
-                  Izin Mikrofon Diperlukan
-                </h3>
               </div>
 
-              <p className="text-white/70 mb-6">
-                Aplikasi memerlukan akses ke mikrofon Anda untuk melakukan
-                panggilan suara dengan AI Psikolog.
-              </p>
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Butuh Akses Mikrofon Nih!
+                </h3>
+                <p className="text-gray-600 text-base leading-relaxed">
+                  Biar kamu bisa ngobrol langsung sama AI Buddy, kita butuh izin
+                  akses mikrofon ya. Tenang, privasi kamu aman kok!
+                </p>
+              </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleAllowMicrophone}
-                  className="flex-1 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
                 >
-                  <Mic className="w-5 h-5 text-white" />
-                  <span className="text-white font-medium">
-                    Izinkan Mikrofon
+                  <Mic className="w-5 h-5 text-white" strokeWidth={2.5} />
+                  <span className="text-white font-semibold">
+                    Oke, Izinkan Mikrofon
                   </span>
                 </motion.button>
 
@@ -442,9 +448,9 @@ export function CallPage({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleEndCall}
-                  className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all"
+                  className="w-full py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all"
                 >
-                  <span className="text-white font-medium">Batal</span>
+                  <span className="text-gray-900 font-semibold">Nanti Deh</span>
                 </motion.button>
               </div>
             </motion.div>
@@ -459,47 +465,63 @@ export function CallPage({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-10"
+            className="absolute inset-0 bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 flex items-center justify-center p-6 z-10"
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-red-500/20"
+              transition={{ type: "spring", bounce: 0.2 }}
+              className="bg-white/95 backdrop-blur-xl rounded-[32px] p-8 max-w-md w-full shadow-2xl"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-red-500" />
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 rounded-[24px] bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center shadow-lg">
+                  <AlertCircle
+                    className="w-10 h-10 text-white"
+                    strokeWidth={2.5}
+                  />
                 </div>
-                <h3 className="text-xl font-semibold text-white">
-                  Koneksi Gagal
-                </h3>
               </div>
 
-              <p className="text-white/70 mb-6">
-                {micPermission === "denied"
-                  ? "Akses mikrofon ditolak. Silakan aktifkan izin mikrofon di pengaturan browser Anda."
-                  : webrtcState.error ||
-                    "Tidak dapat terhubung ke server. Silakan coba lagi."}
-              </p>
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Oops, Ada Kendala Nih!
+                </h3>
+                <p className="text-gray-600 text-base leading-relaxed">
+                  {micPermission === "denied"
+                    ? "Akses mikrofon ditolak. Coba aktifkan dulu izin mikrofon di pengaturan browser kamu ya!"
+                    : webrtcState.error ||
+                      "Koneksi ke server lagi bermasalah. Tenang, coba lagi aja yuk!"}
+                </p>
+              </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3">
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleRetry}
                   disabled={isRetrying}
-                  className="flex-1 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
                 >
                   {isRetrying ? (
                     <>
-                      <RefreshCw className="w-5 h-5 text-white animate-spin" />
-                      <span className="text-white font-medium">Mencoba...</span>
+                      <RefreshCw
+                        className="w-5 h-5 text-white animate-spin"
+                        strokeWidth={2.5}
+                      />
+                      <span className="text-white font-semibold">
+                        Nyoba Lagi...
+                      </span>
                     </>
                   ) : (
                     <>
-                      <RefreshCw className="w-5 h-5 text-white" />
-                      <span className="text-white font-medium">Coba Lagi</span>
+                      <RefreshCw
+                        className="w-5 h-5 text-white"
+                        strokeWidth={2.5}
+                      />
+                      <span className="text-white font-semibold">
+                        Coba Lagi
+                      </span>
                     </>
                   )}
                 </motion.button>
@@ -508,9 +530,9 @@ export function CallPage({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleEndCall}
-                  className="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all"
+                  className="w-full py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all"
                 >
-                  <span className="text-white font-medium">Tutup</span>
+                  <span className="text-gray-900 font-semibold">Tutup</span>
                 </motion.button>
               </div>
             </motion.div>

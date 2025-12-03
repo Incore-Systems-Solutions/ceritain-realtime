@@ -12,45 +12,38 @@ interface HeaderBarProps {
 export function HeaderBar({ onCallClick, onTopupClick }: HeaderBarProps) {
   const { isAuthenticated } = useAuth();
   return (
-    <header
-      className="sticky top-0 z-50 backdrop-blur-xl border-b"
-      style={{
-        backgroundColor: "var(--header-bg)",
-        borderColor: "var(--header-border)",
-      }}
-    >
-      <div className="max-w-4xl mx-auto px-6 h-[70px] flex items-center justify-between">
-        {/* Left: Avatar + Name */}
-        <div className="flex items-center gap-3">
-          {/* Avatar */}
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md">
-            <span className="text-white font-semibold text-sm">AI</span>
+    <header className="sticky top-0 z-50 bg-transparent">
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        {/* Header Layout - 3 Columns */}
+        <div className="flex items-center gap-4">
+          {/* Left - Avatar */}
+          <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center shadow-lg shrink-0">
+            <span className="text-3xl">😊</span>
           </div>
 
-          {/* Name & Status */}
-          <div>
-            <h1 className="font-semibold text-[15px] tracking-tight">
-              AI Friendly
+          {/* Center - Title Section */}
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-white mb-0.5 drop-shadow-lg">
+              AI Friendly💙
             </h1>
-            <p className="text-xs opacity-60">Online</p>
+            <p className="text-white/90 text-sm font-medium drop-shadow">
+              You&apos;re safe here ✨
+            </p>
           </div>
-        </div>
 
-        {/* Right: Call Button & User Profile */}
-        <div className="flex items-center gap-3">
-          {isAuthenticated && (
-            <button
-              onClick={onCallClick}
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
-              style={{
-                backgroundColor: "var(--surface-elevated)",
-              }}
-              aria-label="Start call"
-            >
-              <Phone className="w-5 h-5" style={{ color: "var(--accent)" }} />
-            </button>
-          )}
-          <UserProfile onTopupClick={onTopupClick} />
+          {/* Right - Action Buttons */}
+          <div className="flex items-center gap-3 shrink-0">
+            {isAuthenticated && (
+              <button
+                onClick={onCallClick}
+                className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                aria-label="Start call"
+              >
+                <Phone className="w-5 h-5 text-white" strokeWidth={2.5} />
+              </button>
+            )}
+            <UserProfile onTopupClick={onTopupClick} />
+          </div>
         </div>
       </div>
     </header>
