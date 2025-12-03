@@ -11,6 +11,7 @@ interface HeaderBarProps {
 
 export function HeaderBar({ onCallClick, onTopupClick }: HeaderBarProps) {
   const { isAuthenticated } = useAuth();
+
   return (
     <header className="sticky top-0 z-50 bg-transparent">
       <div className="max-w-4xl mx-auto px-6 py-6">
@@ -36,10 +37,15 @@ export function HeaderBar({ onCallClick, onTopupClick }: HeaderBarProps) {
             {isAuthenticated && (
               <button
                 onClick={onCallClick}
-                className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
+                className="relative w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 hover:from-green-500 hover:to-emerald-600 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-xl animate-pulse hover:animate-none"
                 aria-label="Start call"
               >
-                <Phone className="w-5 h-5 text-white" strokeWidth={2.5} />
+                <div className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></div>
+                <Phone
+                  className="w-6 h-6 text-white relative z-10"
+                  strokeWidth={2.5}
+                  fill="white"
+                />
               </button>
             )}
             <UserProfile onTopupClick={onTopupClick} />

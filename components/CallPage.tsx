@@ -21,14 +21,23 @@ interface CallPageProps {
   onEndCall: () => void;
   contactName?: string;
   contactAvatar?: string;
+  selectedVoice?:
+    | "alloy"
+    | "verse"
+    | "ash"
+    | "coral"
+    | "sage"
+    | "ballad"
+    | "echo";
 }
 
 export function CallPage({
   onEndCall,
   contactName = "Psikolog AI",
   contactAvatar,
+  selectedVoice = "alloy",
 }: CallPageProps) {
-  const { token } = useAuth();
+  const { token, tokenBalance, refreshTokenBalance } = useAuth();
   const [callDuration, setCallDuration] = useState(0);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [showError, setShowError] = useState(false);
@@ -91,9 +100,19 @@ export function CallPage({
     }
   };
 
-  // Check microphone permission first
+  // Check token balance and microphone permission first
   useEffect(() => {
-    const checkMicPermission = async () => {
+    const checkBeforeCall = async () => {
+      // Refresh token balance first
+      await refreshTokenBalance();
+
+      // Check if token is depleted
+      if (tokenBalance !== null && tokenBalance <= 0) {
+        setShowTokenModal(true);
+        return;
+      }
+
+      // Then check microphone permission
       try {
         const result = await navigator.permissions.query({
           name: "microphone" as PermissionName,
@@ -114,8 +133,8 @@ export function CallPage({
       }
     };
 
-    checkMicPermission();
-  }, []);
+    checkBeforeCall();
+  }, [tokenBalance, refreshTokenBalance]);
 
   // Initialize session and connect
   useEffect(() => {
@@ -131,7 +150,7 @@ export function CallPage({
           {
             prompt:
               "jadi seorang psikolog yang membantu menyelesaikan masalah user",
-            voice: "alloy",
+            voice: selectedVoice,
           },
           token || undefined // Pass auth token for authorization
         );
@@ -224,7 +243,7 @@ export function CallPage({
         {
           prompt:
             "jadi seorang psikolog yang membantu menyelesaikan masalah user",
-          voice: "alloy",
+          voice: selectedVoice,
         },
         token || undefined // Pass auth token for authorization
       );

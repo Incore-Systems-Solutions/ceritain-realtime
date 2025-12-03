@@ -10,9 +10,10 @@ const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 
 interface InputBarProps {
   onSendMessage: (text: string) => void;
+  disabled?: boolean;
 }
 
-export function InputBar({ onSendMessage }: InputBarProps) {
+export function InputBar({ onSendMessage, disabled = false }: InputBarProps) {
   const [inputText, setInputText] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -48,7 +49,7 @@ export function InputBar({ onSendMessage }: InputBarProps) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (inputText.trim()) {
+    if (inputText.trim() && !disabled) {
       onSendMessage(inputText);
       setInputText("");
       setShowEmojiPicker(false);
@@ -93,16 +94,25 @@ export function InputBar({ onSendMessage }: InputBarProps) {
     <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-white/40 to-transparent">
       <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-4">
         {/* Input Field */}
-        <div className="flex items-center gap-3 rounded-full px-5 py-3 bg-white/95 backdrop-blur-sm shadow-xl border border-white/50">
+        <div
+          className={`flex items-center gap-3 rounded-full px-5 py-3 bg-white/95 backdrop-blur-sm shadow-xl border border-white/50 ${
+            disabled ? "opacity-50" : ""
+          }`}
+        >
           {/* Emoji Button */}
           <div className="relative" ref={emojiPickerRef}>
             <button
               type="button"
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="shrink-0 transition-all hover:scale-110 active:scale-95"
+              onClick={() => !disabled && setShowEmojiPicker(!showEmojiPicker)}
+              disabled={disabled}
+              className="shrink-0 transition-all hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:hover:scale-100"
               aria-label="Emoji picker"
             >
-              <Smile className="w-6 h-6 text-blue-500" />
+              <Smile
+                className={`w-6 h-6 ${
+                  disabled ? "text-gray-400" : "text-blue-500"
+                }`}
+              />
             </button>
 
             {/* Emoji Picker Popup */}
@@ -133,9 +143,14 @@ export function InputBar({ onSendMessage }: InputBarProps) {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ketik sesuatu di sini..."
+            placeholder={
+              disabled
+                ? "Token habis, topup dulu yuk..."
+                : "Ketik sesuatu di sini..."
+            }
             rows={1}
-            className="flex-1 bg-transparent outline-none text-[15px] text-gray-700 placeholder:text-gray-400 resize-none max-h-[120px] overflow-y-auto py-1 font-medium"
+            disabled={disabled}
+            className="flex-1 bg-transparent outline-none text-[15px] text-gray-700 placeholder:text-gray-400 resize-none max-h-[120px] overflow-y-auto py-1 font-medium disabled:cursor-not-allowed"
             style={{
               minHeight: "24px",
             }}
@@ -143,7 +158,7 @@ export function InputBar({ onSendMessage }: InputBarProps) {
 
           {/* Send Button - Only show when there's text */}
           <AnimatePresence>
-            {inputText.trim() && (
+            {inputText.trim() && !disabled && (
               <motion.button
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

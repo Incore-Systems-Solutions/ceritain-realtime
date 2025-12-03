@@ -1,25 +1,28 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "ai";
-  timestamp: Date;
-}
+import { Wallet } from "lucide-react";
+import { Message } from "@/hooks/useChat";
 
 interface ChatBubbleProps {
   message: Message;
+  onTopupClick?: () => void;
 }
 
-export function ChatBubble({ message }: ChatBubbleProps) {
+export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
   const isUser = message.sender === "user";
 
   // Format timestamp
   const time = message.timestamp.toLocaleTimeString("id-ID", {
     hour: "2-digit",
     minute: "2-digit",
+  });
+
+  // Debug log
+  console.log("ChatBubble message:", {
+    id: message.id,
+    isTokenEmpty: message.isTokenEmpty,
+    hasOnTopupClick: !!onTopupClick,
   });
 
   return (
@@ -40,6 +43,19 @@ export function ChatBubble({ message }: ChatBubbleProps) {
         <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words font-medium">
           {message.text}
         </p>
+
+        {/* Topup Button for Token Empty */}
+        {message.isTokenEmpty && onTopupClick && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onTopupClick}
+            className="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
+          >
+            <Wallet className="w-5 h-5" strokeWidth={2.5} />
+            Topup Sekarang
+          </motion.button>
+        )}
 
         {/* Timestamp */}
         <p

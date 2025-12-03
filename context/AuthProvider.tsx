@@ -12,9 +12,11 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  tokenBalance: number | null;
   login: (token: string, user: User) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  refreshTokenBalance: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
 
   // Load from localStorage after hydration
   React.useEffect(() => {
@@ -31,6 +34,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (storedToken) setToken(storedToken);
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
+
+  // Fetch token balance when token is available
+  const refreshTokenBalance = React.useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const { authApi } = await import("@/lib/auth-api");
+      const response = await authApi.getToken(token);
+      if (response.result !== undefined) {
+        setTokenBalance(response.result);
+      }
+    } catch (error) {
+      console.error("Failed to fetch token balance:", error);
+    }
+  }, [token]);
+
+  // Auto-fetch token balance when token changes
+  React.useEffect(() => {
+    if (token) {
+      refreshTokenBalance();
+    } else {
+      setTokenBalance(null);
+    }
+  }, [token, refreshTokenBalance]);
 
   const login = (newToken: string, newUser: User) => {
     setToken(newToken);
@@ -53,9 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         token,
+        tokenBalance,
         login,
         logout,
         isAuthenticated: !!token && !!user,
+        refreshTokenBalance,
       }}
     >
       {children}

@@ -40,9 +40,18 @@ export interface RealtimeSessionResponse {
   };
 }
 
+export type VoiceType =
+  | "alloy"
+  | "verse"
+  | "ash"
+  | "coral"
+  | "sage"
+  | "ballad"
+  | "echo";
+
 export interface RealtimeSessionPayload {
   prompt: string;
-  voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
+  voice: VoiceType;
 }
 
 /**
