@@ -36,7 +36,7 @@ export interface RealtimeSessionResponse {
       value: string;
       expires_at: number;
     };
-    include: any;
+    include: unknown;
   };
 }
 
@@ -46,20 +46,38 @@ export interface RealtimeSessionPayload {
 }
 
 /**
+ * Callback interface for AI speaking events
+ */
+export interface AISpeakingCallbacks {
+  onAISpeakingStart?: () => void;
+  onAISpeakingStop?: (duration: number) => void;
+}
+
+/**
  * Create a new realtime session with the API
+ * @param payload - Session configuration (prompt, voice)
+ * @param token - Authorization token (optional)
  */
 export async function createRealtimeSession(
-  payload: RealtimeSessionPayload
+  payload: RealtimeSessionPayload,
+  token?: string
 ): Promise<string> {
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    // Add Authorization header if token is provided
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(
       process.env.NEXT_PUBLIC_REALTIME_API_URL ||
         "https://apiceritain.indonesiacore.com/api/realtime/session",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       }
     );
@@ -90,4 +108,67 @@ export async function createRealtimeSession(
     console.error("Failed to create realtime session:", error);
     throw error;
   }
+}
+
+/**
+ * Setup AI speaking detection on data channel
+ * Monitors WebRTC events to detect when AI starts and stops speaking
+ *
+ * @param dataChannel - RTCDataChannel to monitor
+ * @param callbacks - Callbacks for AI speaking events
+ */
+export function setupAISpeakingDetection(
+  dataChannel: RTCDataChannel,
+  callbacks: AISpeakingCallbacks
+): () => void {
+  let aiSpeakingStartTime: number | null = null;
+  let isAISpeaking = false;
+
+  const handleMessage = (event: MessageEvent) => {
+    try {
+      const message = JSON.parse(event.data);
+
+      // Detect AI starts speaking
+      // This can be triggered by response.audio.delta or response.audio_transcript.delta
+      if (
+        message.type === "response.audio.delta" ||
+        message.type === "response.audio_transcript.delta" ||
+        message.type === "response.content_part.added"
+      ) {
+        if (!isAISpeaking) {
+          isAISpeaking = true;
+          aiSpeakingStartTime = Date.now();
+          console.log("🤖 AI started speaking");
+          callbacks.onAISpeakingStart?.();
+        }
+      }
+
+      // Detect AI stops speaking
+      // This is triggered when response is done
+      if (
+        message.type === "response.done" ||
+        message.type === "response.audio_transcript.done" ||
+        message.type === "response.audio.done"
+      ) {
+        if (isAISpeaking && aiSpeakingStartTime) {
+          const duration = Math.round(
+            (Date.now() - aiSpeakingStartTime) / 1000
+          );
+          isAISpeaking = false;
+          aiSpeakingStartTime = null;
+          console.log(`🤖 AI stopped speaking. Duration: ${duration}s`);
+          callbacks.onAISpeakingStop?.(duration);
+        }
+      }
+    } catch (err) {
+      // Ignore parse errors
+    }
+  };
+
+  dataChannel.addEventListener("message", handleMessage);
+
+  // Cleanup function
+  return () => {
+    dataChannel.removeEventListener("message", handleMessage);
+  };
 }
