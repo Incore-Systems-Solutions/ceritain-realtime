@@ -103,7 +103,7 @@ export function VoiceSelectionModalI18n({
     }
 
     // Create new audio element
-    const audio = new Audio(`/voices/${voice}.wav`);
+    const audio = new Audio(`/haloo-${voice}.wav`);
     audioRef.current = audio;
 
     // Play the audio
