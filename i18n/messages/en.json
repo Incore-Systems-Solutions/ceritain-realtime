@@ -69,7 +69,7 @@
     "logoutButton": "Sign Out"
   },
   "voice": {
-    "title": "Choose AI Voice 🎙️",
+    "title": "Choose AI Voice ",
     "description": "Pick the voice that vibes with you",
     "startCallButton": "Start Call",
     "voices": {

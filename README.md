@@ -4,7 +4,7 @@ Real-time voice consultation platform with AI psychologist powered by OpenAI Rea
 
 ## ✨ Features
 
-- 🎙️ **Real-time Voice Call** - Speak directly with AI psychologist
+- **Real-time Voice Call** - Speak directly with AI psychologist
 - 📝 **Live Transcription** - See your conversation in real-time
 - 🎨 **Modern UI** - Beautiful, smooth animations with Framer Motion
 - 🔊 **Audio Visualization** - Dynamic waveform based on actual audio levels

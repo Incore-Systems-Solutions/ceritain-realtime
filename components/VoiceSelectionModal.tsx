@@ -114,7 +114,7 @@ export function VoiceSelectionModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">
-                Pilih Voice AI 🎙️
+                Pilih Voice AI
               </h2>
               <p className="text-xs text-gray-600">
                 Pilih suara yang paling vibe

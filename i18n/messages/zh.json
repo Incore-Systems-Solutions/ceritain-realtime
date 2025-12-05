@@ -69,7 +69,7 @@
     "logoutButton": "退出"
   },
   "voice": {
-    "title": "选择 AI 语音 🎙️",
+    "title": "选择 AI 语音 ",
     "description": "选择您喜欢的声音",
     "startCallButton": "开始通话",
     "voices": {
