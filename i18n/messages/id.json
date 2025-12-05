@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "success": "Berhasil",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "close": "Tutup",
+    "back": "Kembali",
+    "next": "Lanjutkan",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "edit": "Edit"
+  },
+  "header": {
+    "title": "AI Friendly💙",
+    "subtitle": "You're safe here ✨",
+    "callButton": "Mulai panggilan"
+  },
+  "chat": {
+    "emptyTitle": "Mulai Percakapan 💬",
+    "emptyDescription": "Kirim pesan untuk mulai ngobrol dengan AI Buddy yang siap dengerin kamu",
+    "loadingMessage": "Mempersiapkan percakapan...",
+    "typingIndicator": "AI is typing...",
+    "inputPlaceholder": "Ketik sesuatu di sini...",
+    "inputPlaceholderDisabled": "Token habis, topup dulu yuk...",
+    "sendButton": "Kirim pesan",
+    "errorMessage": "Maaf, terjadi kesalahan. Silakan coba lagi."
+  },
+  "login": {
+    "title": "Welcome Back 💙",
+    "description": "Tempat aman buat cerita & ngeluarin isi kepala. Kamu nggak sendirian di sini",
+    "emailLabel": "Email kamu",
+    "emailPlaceholder": "nama@email.com",
+    "sendOtpButton": "Kirim Kode OTP",
+    "sendingOtp": "Mengirim kode...",
+    "footer": "Kode OTP akan dikirim ke email kamu.\nPrivasi kamu aman di sini.",
+    "errorInvalidEmail": "Masukkan email yang valid"
+  },
+  "otp": {
+    "title": "Verifikasi Kode OTP",
+    "description": "Kode verifikasi udah dikirim ke",
+    "verifyButton": "Verifikasi & Masuk",
+    "verifying": "Memverifikasi...",
+    "footer": "Cek inbox atau folder spam email kamu",
+    "errorInvalidOtp": "Masukkan kode OTP 6 digit",
+    "errorWrongOtp": "Kode OTP tidak valid"
+  },
+  "topup": {
+    "title": "Topup Token",
+    "paymentTitle": "Pilih Pembayaran",
+    "successTitle": "Yeay, Berhasil!",
+    "amountDescription": "Isi token buat lanjut ngobrol sama AI Friendly. Tenang, prosesnya gampang banget kok!",
+    "paymentDescription": "Pilih metode pembayaran yang paling nyaman buat kamu. Semua aman dan terpercaya!",
+    "successDescription": "Token kamu udah siap! Sekarang kamu bisa lanjut cerita dan curhat sepuasnya sama AI Friendly",
+    "amountLabel": "Nominal Topup",
+    "totalTopup": "Total Topup",
+    "orderId": "Order ID",
+    "validUntil": "Berlaku sampai",
+    "payNowButton": "Bayar Sekarang",
+    "payNowExternal": "Bayar Sekarang",
+    "processing": "Memproses...",
+    "minAmount": "Minimal topup Rp 10.000",
+    "fee": "Fee"
+  },
+  "profile": {
+    "tokenBalance": "Token Balance",
+    "topupButton": "Topup Token",
+    "logoutButton": "Keluar"
+  },
+  "voice": {
+    "title": "Pilih Voice AI 🎙️",
+    "description": "Pilih suara yang paling vibe",
+    "startCallButton": "Mulai Call",
+    "voices": {
+      "alloy": {
+        "label": "Alloy",
+        "description": "Netral & jelas"
+      },
+      "verse": {
+        "label": "Verse",
+        "description": "Ekspresif & energik"
+      },
+      "ash": {
+        "label": "Ash",
+        "description": "Hangat & cozy"
+      },
+      "coral": {
+        "label": "Coral",
+        "description": "Lembut & kalem"
+      },
+      "sage": {
+        "label": "Sage",
+        "description": "Bijak & gentle"
+      },
+      "ballad": {
+        "label": "Ballad",
+        "description": "Merdu & smooth"
+      },
+      "echo": {
+        "label": "Echo",
+        "description": "Resonan & clear"
+      }
+    }
+  },
+  "call": {
+    "contactName": "AI Assistant",
+    "statusConnecting": "Menghubungkan...",
+    "statusConnected": "Terhubung • Mic Aktif",
+    "statusConnectedMuted": "Terhubung • Mic Mati",
+    "statusError": "Koneksi Gagal",
+    "statusDisconnected": "Terputus",
+    "endCallButton": "Akhiri Panggilan",
+    "micPermissionTitle": "Butuh Akses Mikrofon Nih!",
+    "micPermissionDescription": "Biar kamu bisa ngobrol langsung sama AI Buddy, kita butuh izin akses mikrofon ya. Tenang, privasi kamu aman kok!",
+    "allowMicButton": "Oke, Izinkan Mikrofon",
+    "laterButton": "Nanti Deh",
+    "tokenDepletedTitle": "Token Kamu Udah Habis!",
+    "tokenDepletedDescription": "Token kamu udah habis nih. Yuk topup dulu biar bisa lanjut ngobrol sama AI Buddy!",
+    "topupNowButton": "Oke, Topup Sekarang",
+    "errorTitle": "Oops, Ada Kendala Nih! 😅",
+    "errorMicDenied": "Akses mikrofon ditolak. Coba aktifkan dulu izin mikrofon di pengaturan browser kamu ya!",
+    "errorConnection": "Koneksi ke server lagi bermasalah. Tenang, coba lagi aja yuk!",
+    "retryButton": "Coba Lagi",
+    "retrying": "Nyoba Lagi..."
+  },
+  "tokenDepleted": {
+    "title": "Token Kamu Udah Habis! 😅",
+    "description": "Token kamu udah habis nih. Yuk topup dulu biar bisa lanjut ngobrol sama AI Buddy!",
+    "topupButton": "Oke, Topup Sekarang",
+    "laterButton": "Nanti Deh"
+  },
+  "chatBubble": {
+    "topupButton": "Topup Sekarang"
+  }
+}

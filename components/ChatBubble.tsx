@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Wallet } from "lucide-react";
 import { Message } from "@/hooks/useChat";
 
@@ -10,6 +11,7 @@ interface ChatBubbleProps {
 }
 
 export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
+  const t = useTranslations("chatBubble");
   const isUser = message.sender === "user";
 
   // Format timestamp
@@ -53,7 +55,7 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
             className="mt-3 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30"
           >
             <Wallet className="w-5 h-5" strokeWidth={2.5} />
-            Topup Sekarang
+            {t("topupButton")}
           </motion.button>
         )}
 

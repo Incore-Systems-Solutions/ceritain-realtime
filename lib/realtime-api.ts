@@ -63,6 +63,33 @@ export interface AISpeakingCallbacks {
 }
 
 /**
+ * Get current locale from URL pathname
+ * Returns locale code (id, en, zh, ar) or default 'id'
+ */
+function getCurrentLocale(): string {
+  if (typeof window === "undefined") return "id";
+
+  const pathname = window.location.pathname;
+  const localeMatch = pathname.match(/^\/(id|en|zh|ar)/);
+
+  return localeMatch ? localeMatch[1] : "id";
+}
+
+/**
+ * Map locale to Accept-Language header format
+ */
+function getAcceptLanguageHeader(locale: string): string {
+  const languageMap: Record<string, string> = {
+    id: "id-ID,id;q=0.9",
+    en: "en-US,en;q=0.9",
+    zh: "zh-CN,zh;q=0.9",
+    ar: "ar-SA,ar;q=0.9",
+  };
+
+  return languageMap[locale] || languageMap["id"];
+}
+
+/**
  * Create a new realtime session with the API
  * @param payload - Session configuration (prompt, voice)
  * @param token - Authorization token (optional)
@@ -72,8 +99,12 @@ export async function createRealtimeSession(
   token?: string
 ): Promise<string> {
   try {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
+      "Accept-Language": acceptLanguage,
     };
 
     // Add Authorization header if token is provided

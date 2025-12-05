@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/context/AuthProvider";
 import { authApi } from "@/lib/auth-api";
 import { User, Coins, LogOut, Loader2, Plus } from "lucide-react";
@@ -11,6 +12,7 @@ interface UserProfileProps {
 }
 
 export function UserProfile({ onTopupClick }: UserProfileProps) {
+  const t = useTranslations("profile");
   const { user, token, logout } = useAuth();
   const [showMenu, setShowMenu] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
@@ -105,7 +107,7 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
                         <Coins className="w-4 h-4 text-white" />
                       </div>
                       <span className="text-sm font-semibold text-gray-700">
-                        Token Balance
+                        {t("tokenBalance")}
                       </span>
                     </div>
                     <div className="text-right">
@@ -130,7 +132,7 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98]"
                   >
                     <Plus className="w-4 h-4" strokeWidth={2.5} />
-                    Topup Token
+                    {t("topupButton")}
                   </button>
                 </div>
               </div>
@@ -146,7 +148,7 @@ export function UserProfile({ onTopupClick }: UserProfileProps) {
                 <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
                   <LogOut className="w-5 h-5 text-red-600" strokeWidth={2.5} />
                 </div>
-                <span>Keluar</span>
+                <span>{t("logoutButton")}</span>
               </button>
             </motion.div>
           </>

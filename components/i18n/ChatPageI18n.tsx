@@ -1,28 +1,31 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircle, Loader2 } from "lucide-react";
-import { HeaderBar } from "./HeaderBar";
-import { ChatBubble } from "./ChatBubble";
-import { InputBar } from "./InputBar";
-import { CallPage } from "./CallPage";
-import { LoginModal } from "./LoginModal";
-import { OTPModal } from "./OTPModal";
-import { TopupModal } from "./TopupModal";
-import { VoiceSelectionModal } from "./VoiceSelectionModal";
-import { useChat } from "@/hooks/useChat";
+import { HeaderBar } from "../HeaderBar";
+import { ChatBubble } from "../ChatBubble";
+import { InputBarI18n } from "./InputBarI18n";
+import { CallPageI18n } from "./CallPageI18n";
+import { LoginModalI18n } from "./LoginModalI18n";
+import { OTPModalI18n } from "./OTPModalI18n";
+import { TopupModalI18n } from "./TopupModalI18n";
+import { VoiceSelectionModalI18n } from "./VoiceSelectionModalI18n";
+import { useChatI18n } from "@/hooks/useChatI18n";
 import { useAuth } from "@/context/AuthProvider";
 import type { VoiceType } from "@/lib/realtime-api";
 
-export function ChatPage() {
+export function ChatPageI18n() {
+  const t = useTranslations("chat");
+  const tToken = useTranslations("tokenDepleted");
   const {
     messages,
     isTyping,
     sendMessage,
     isInitialized,
     hasInsufficientToken,
-  } = useChat();
+  } = useChatI18n();
   const { isAuthenticated } = useAuth();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isCallActive, setIsCallActive] = useState(false);
@@ -30,7 +33,6 @@ export function ChatPage() {
   const [loginEmail, setLoginEmail] = useState("");
   const [showTopupModal, setShowTopupModal] = useState(false);
 
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -58,7 +60,6 @@ export function ChatPage() {
     setIsCallActive(false);
   };
 
-  // Listen for token depleted event
   useEffect(() => {
     const handleTokenDepleted = () => {
       setShowTokenDepletedModal(true);
@@ -73,9 +74,8 @@ export function ChatPage() {
 
   return (
     <>
-      {/* Login Modals */}
       {!isAuthenticated && !showOTPModal && (
-        <LoginModal
+        <LoginModalI18n
           onSuccess={(email) => {
             setLoginEmail(email);
             setShowOTPModal(true);
@@ -84,7 +84,7 @@ export function ChatPage() {
       )}
 
       {!isAuthenticated && showOTPModal && (
-        <OTPModal
+        <OTPModalI18n
           email={loginEmail}
           onBack={() => {
             setShowOTPModal(false);
@@ -93,7 +93,6 @@ export function ChatPage() {
         />
       )}
 
-      {/* Chat Interface */}
       {!isCallActive && isAuthenticated && (
         <div className="flex flex-col h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-300">
           <HeaderBar
@@ -101,13 +100,11 @@ export function ChatPage() {
             onTopupClick={() => setShowTopupModal(true)}
           />
 
-          {/* Chat Area */}
           <div
             ref={chatContainerRef}
             className="flex-1 overflow-y-auto px-4 py-6 pb-32"
           >
             <div className="max-w-4xl mx-auto">
-              {/* Loading State */}
               {isAuthenticated && !isInitialized && messages.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -119,12 +116,11 @@ export function ChatPage() {
                     <Loader2 className="w-10 h-10 animate-spin text-white" />
                   </div>
                   <p className="text-base font-semibold text-white drop-shadow">
-                    {/* Mempersiapkan percakapan... */}
+                    {t("loadingMessage")}
                   </p>
                 </motion.div>
               )}
 
-              {/* Empty State */}
               {messages.length === 0 && isInitialized && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -139,15 +135,14 @@ export function ChatPage() {
                     />
                   </div>
                   <h2 className="text-2xl font-bold mb-3 text-white drop-shadow-lg">
-                    {/* Mulai Percakapan 💬 */}
+                    {t("emptyTitle")}
                   </h2>
                   <p className="text-base text-white/90 max-w-md leading-relaxed drop-shadow">
-                    {/* Kirim pesan untuk mulai ngobrol dengan AI Buddy yang siap dengerin kamu */}
+                    {t("emptyDescription")}
                   </p>
                 </motion.div>
               )}
 
-              {/* Messages */}
               {messages.map((message) => (
                 <ChatBubble
                   key={message.id}
@@ -156,20 +151,14 @@ export function ChatPage() {
                 />
               ))}
 
-              {/* Supportive Message */}
               {messages.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="text-center my-4"
-                >
-                  {/* <p className="text-white/80 text-sm font-medium drop-shadow">
-                    ✨ You&apos;re doing great
-                  </p> */}
-                </motion.div>
+                />
               )}
 
-              {/* Typing Indicator */}
               {isTyping && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -180,7 +169,7 @@ export function ChatPage() {
                   <div className="max-w-[75%] rounded-3xl rounded-tl-lg px-5 py-3 bg-white/95 backdrop-blur-sm shadow-lg flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
                     <span className="text-[15px] text-gray-700 font-medium">
-                      {/* AI is typing... */}
+                      {t("typingIndicator")}
                     </span>
                   </div>
                 </motion.div>
@@ -188,17 +177,16 @@ export function ChatPage() {
             </div>
           </div>
 
-          <InputBar
+          <InputBarI18n
             onSendMessage={sendMessage}
             disabled={hasInsufficientToken}
           />
         </div>
       )}
 
-      {/* Call Interface */}
       <AnimatePresence>
         {isCallActive && (
-          <CallPage
+          <CallPageI18n
             onEndCall={handleEndCall}
             contactName="AI Assistant"
             selectedVoice={selectedVoice}
@@ -206,31 +194,27 @@ export function ChatPage() {
         )}
       </AnimatePresence>
 
-      {/* Voice Selection Modal */}
       <AnimatePresence>
         {showVoiceModal && (
-          <VoiceSelectionModal
+          <VoiceSelectionModalI18n
             onSelect={handleVoiceSelect}
             onClose={() => setShowVoiceModal(false)}
           />
         )}
       </AnimatePresence>
 
-      {/* Topup Modal */}
       <AnimatePresence>
         {showTopupModal && (
-          <TopupModal
+          <TopupModalI18n
             onClose={() => setShowTopupModal(false)}
             onSuccess={() => {
               setShowTopupModal(false);
-              // Trigger token balance refresh in UserProfile
               window.dispatchEvent(new Event("refreshTokenBalance"));
             }}
           />
         )}
       </AnimatePresence>
 
-      {/* Token Depleted Modal */}
       <AnimatePresence>
         {showTokenDepletedModal && (
           <motion.div
@@ -266,10 +250,10 @@ export function ChatPage() {
 
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {/* Token Kamu Udah Habis! 😅 */}
+                  {tToken("title")}
                 </h3>
                 <p className="text-gray-600 text-base leading-relaxed">
-                  {/* Token kamu udah habis nih. Yuk topup dulu biar bisa lanjut ngobrol sama AI Buddy! */}
+                  {tToken("description")}
                 </p>
               </div>
 
@@ -297,7 +281,7 @@ export function ChatPage() {
                     />
                   </svg>
                   <span className="text-white font-semibold">
-                    {/* Oke, Topup Sekarang */}
+                    {tToken("topupButton")}
                   </span>
                 </motion.button>
 
@@ -308,7 +292,7 @@ export function ChatPage() {
                   className="w-full py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all"
                 >
                   <span className="text-gray-900 font-semibold">
-                    {/* Nanti Deh */}
+                    {tToken("laterButton")}
                   </span>
                 </motion.button>
               </div>

@@ -4,6 +4,33 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   "https://apiceritain.indonesiacore.com";
 
+/**
+ * Get current locale from URL pathname
+ * Returns locale code (id, en, zh, ar) or default 'id'
+ */
+function getCurrentLocale(): string {
+  if (typeof window === "undefined") return "id";
+
+  const pathname = window.location.pathname;
+  const localeMatch = pathname.match(/^\/(id|en|zh|ar)/);
+
+  return localeMatch ? localeMatch[1] : "id";
+}
+
+/**
+ * Map locale to Accept-Language header format
+ */
+function getAcceptLanguageHeader(locale: string): string {
+  const languageMap: Record<string, string> = {
+    id: "id-ID,id;q=0.9",
+    en: "en-US,en;q=0.9",
+    zh: "zh-CN,zh;q=0.9",
+    ar: "ar-SA,ar;q=0.9",
+  };
+
+  return languageMap[locale] || languageMap["id"];
+}
+
 export interface RequestOTPResponse {
   errorCode: number;
   message: string;
@@ -45,10 +72,14 @@ export interface TokenUsageResponse {
 
 export const authApi = {
   async requestOTP(email: string): Promise<RequestOTPResponse> {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
     const response = await fetch(`${API_BASE_URL}/api/auth/login-v2`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept-Language": acceptLanguage,
       },
       body: JSON.stringify({ email }),
     });
@@ -63,10 +94,14 @@ export const authApi = {
   },
 
   async verifyOTP(email: string, otp: string): Promise<VerifyOTPResponse> {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
     const response = await fetch(`${API_BASE_URL}/api/auth/password-v2`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept-Language": acceptLanguage,
       },
       body: JSON.stringify({
         email,
@@ -85,10 +120,14 @@ export const authApi = {
   },
 
   async getToken(token: string): Promise<TokenResponse> {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
     const response = await fetch(`${API_BASE_URL}/api/token`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Accept-Language": acceptLanguage,
       },
     });
 
@@ -113,6 +152,9 @@ export const authApi = {
     time: number
   ): Promise<TokenUsageResponse> {
     try {
+      const locale = getCurrentLocale();
+      const acceptLanguage = getAcceptLanguageHeader(locale);
+
       const response = await fetch(
         `${API_BASE_URL}/api/realtime/token-usage-user`,
         {
@@ -120,6 +162,7 @@ export const authApi = {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Accept-Language": acceptLanguage,
           },
           body: JSON.stringify({ time }),
         }
@@ -151,6 +194,9 @@ export const authApi = {
     time: number
   ): Promise<TokenUsageResponse> {
     try {
+      const locale = getCurrentLocale();
+      const acceptLanguage = getAcceptLanguageHeader(locale);
+
       const response = await fetch(
         `${API_BASE_URL}/api/realtime/token-usage-ai`,
         {
@@ -158,6 +204,7 @@ export const authApi = {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Accept-Language": acceptLanguage,
           },
           body: JSON.stringify({ time }),
         }

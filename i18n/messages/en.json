@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "header": {
+    "title": "AI Friendly",
+    "subtitle": "You're safe here",
+    "callButton": "Start call"
+  },
+  "chat": {
+    "emptyTitle": "Start Conversation 💬",
+    "emptyDescription": "Send a message to start chatting with your AI Buddy who's ready to listen",
+    "loadingMessage": "Preparing conversation...",
+    "typingIndicator": "AI is typing...",
+    "inputPlaceholder": "Type something here...",
+    "inputPlaceholderDisabled": "Out of tokens, please top up...",
+    "sendButton": "Send message",
+    "errorMessage": "Sorry, an error occurred. Please try again."
+  },
+  "login": {
+    "title": "Welcome Back 💙",
+    "description": "A safe space to share and express yourself. You're not alone here",
+    "emailLabel": "Your email",
+    "emailPlaceholder": "name@email.com",
+    "sendOtpButton": "Send OTP Code",
+    "sendingOtp": "Sending code...",
+    "footer": "OTP code will be sent to your email.\nYour privacy is safe here.",
+    "errorInvalidEmail": "Please enter a valid email"
+  },
+  "otp": {
+    "title": "Verify OTP Code",
+    "description": "Verification code has been sent to",
+    "verifyButton": "Verify & Sign In",
+    "verifying": "Verifying...",
+    "footer": "Check your inbox or spam folder",
+    "errorInvalidOtp": "Please enter 6-digit OTP code",
+    "errorWrongOtp": "Invalid OTP code"
+  },
+  "topup": {
+    "title": "Top Up Tokens",
+    "paymentTitle": "Choose Payment",
+    "successTitle": "Yay, Success!",
+    "amountDescription": "Top up tokens to continue chatting with AI Friendly. Don't worry, it's super easy!",
+    "paymentDescription": "Choose the payment method that's most convenient for you. All are safe and trusted!",
+    "successDescription": "Your tokens are ready! Now you can continue chatting and sharing with AI Friendly",
+    "amountLabel": "Top Up Amount",
+    "totalTopup": "Total Top Up",
+    "orderId": "Order ID",
+    "validUntil": "Valid until",
+    "payNowButton": "Pay Now",
+    "payNowExternal": "Pay Now",
+    "processing": "Processing...",
+    "minAmount": "Minimum top up Rp 10,000",
+    "fee": "Fee"
+  },
+  "profile": {
+    "tokenBalance": "Token Balance",
+    "topupButton": "Top Up Tokens",
+    "logoutButton": "Sign Out"
+  },
+  "voice": {
+    "title": "Choose AI Voice 🎙️",
+    "description": "Pick the voice that vibes with you",
+    "startCallButton": "Start Call",
+    "voices": {
+      "alloy": {
+        "label": "Alloy",
+        "description": "Neutral & clear"
+      },
+      "verse": {
+        "label": "Verse",
+        "description": "Expressive & energetic"
+      },
+      "ash": {
+        "label": "Ash",
+        "description": "Warm & cozy"
+      },
+      "coral": {
+        "label": "Coral",
+        "description": "Soft & calm"
+      },
+      "sage": {
+        "label": "Sage",
+        "description": "Wise & gentle"
+      },
+      "ballad": {
+        "label": "Ballad",
+        "description": "Melodious & smooth"
+      },
+      "echo": {
+        "label": "Echo",
+        "description": "Resonant & clear"
+      }
+    }
+  },
+  "call": {
+    "contactName": "AI Assistant",
+    "statusConnecting": "Connecting...",
+    "statusConnected": "Connected • Mic On",
+    "statusConnectedMuted": "Connected • Mic Off",
+    "statusError": "Connection Failed",
+    "statusDisconnected": "Disconnected",
+    "endCallButton": "End Call",
+    "micPermissionTitle": "Microphone Access Needed!",
+    "micPermissionDescription": "To chat directly with AI Buddy, we need microphone access. Don't worry, your privacy is safe!",
+    "allowMicButton": "Allow Microphone",
+    "laterButton": "Maybe Later",
+    "tokenDepletedTitle": "You're Out of Tokens!",
+    "tokenDepletedDescription": "Your tokens have run out. Let's top up so you can continue chatting with AI Buddy!",
+    "topupNowButton": "Top Up Now",
+    "errorTitle": "Oops, Something Went Wrong! 😅",
+    "errorMicDenied": "Microphone access denied. Please enable microphone permission in your browser settings!",
+    "errorConnection": "Server connection is having issues. Don't worry, just try again!",
+    "retryButton": "Try Again",
+    "retrying": "Retrying..."
+  },
+  "tokenDepleted": {
+    "title": "You're Out of Tokens! 😅",
+    "description": "Your tokens have run out. Let's top up so you can continue chatting with AI Buddy!",
+    "topupButton": "Top Up Now",
+    "laterButton": "Maybe Later"
+  },
+  "chatBubble": {
+    "topupButton": "Top Up Now"
+  }
+}

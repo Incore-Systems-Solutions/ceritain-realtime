@@ -1,0 +1,136 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "error": "发生错误",
+    "success": "成功",
+    "cancel": "取消",
+    "confirm": "确认",
+    "close": "关闭",
+    "back": "返回",
+    "next": "继续",
+    "save": "保存",
+    "delete": "删除",
+    "edit": "编辑"
+  },
+  "header": {
+    "title": "AI友善",
+    "subtitle": "你在這裡很安全。",
+    "callButton": "开始通话"
+  },
+  "chat": {
+    "emptyTitle": "开始对话 💬",
+    "emptyDescription": "发送消息开始与随时倾听您的 AI 伙伴聊天",
+    "loadingMessage": "准备对话中...",
+    "typingIndicator": "AI 正在输入...",
+    "inputPlaceholder": "在这里输入内容...",
+    "inputPlaceholderDisabled": "代币已用完，请充值...",
+    "sendButton": "发送消息",
+    "errorMessage": "抱歉，发生错误。请重试。"
+  },
+  "login": {
+    "title": "欢迎回来 💙",
+    "description": "一个安全的空间，让您分享和表达自己。您在这里并不孤单",
+    "emailLabel": "您的邮箱",
+    "emailPlaceholder": "name@email.com",
+    "sendOtpButton": "发送验证码",
+    "sendingOtp": "发送中...",
+    "footer": "验证码将发送到您的邮箱。\n您的隐私在这里是安全的。",
+    "errorInvalidEmail": "请输入有效的邮箱"
+  },
+  "otp": {
+    "title": "验证 OTP 代码",
+    "description": "验证码已发送至",
+    "verifyButton": "验证并登录",
+    "verifying": "验证中...",
+    "footer": "请检查您的收件箱或垃圾邮件文件夹",
+    "errorInvalidOtp": "请输入 6 位验证码",
+    "errorWrongOtp": "验证码无效"
+  },
+  "topup": {
+    "title": "充值代币",
+    "paymentTitle": "选择支付方式",
+    "successTitle": "太好了，成功！",
+    "amountDescription": "充值代币以继续与 AI Friendly 聊天。别担心，这非常简单！",
+    "paymentDescription": "选择最方便的支付方式。所有方式都安全可靠！",
+    "successDescription": "您的代币已准备好！现在您可以继续与 AI Friendly 聊天和分享",
+    "amountLabel": "充值金额",
+    "totalTopup": "充值总额",
+    "orderId": "订单号",
+    "validUntil": "有效期至",
+    "payNowButton": "立即支付",
+    "payNowExternal": "立即支付",
+    "processing": "处理中...",
+    "minAmount": "最低充值 Rp 10,000",
+    "fee": "手续费"
+  },
+  "profile": {
+    "tokenBalance": "代币余额",
+    "topupButton": "充值代币",
+    "logoutButton": "退出"
+  },
+  "voice": {
+    "title": "选择 AI 语音 🎙️",
+    "description": "选择您喜欢的声音",
+    "startCallButton": "开始通话",
+    "voices": {
+      "alloy": {
+        "label": "Alloy",
+        "description": "中性清晰"
+      },
+      "verse": {
+        "label": "Verse",
+        "description": "富有表现力和活力"
+      },
+      "ash": {
+        "label": "Ash",
+        "description": "温暖舒适"
+      },
+      "coral": {
+        "label": "Coral",
+        "description": "柔和平静"
+      },
+      "sage": {
+        "label": "Sage",
+        "description": "睿智温和"
+      },
+      "ballad": {
+        "label": "Ballad",
+        "description": "悦耳流畅"
+      },
+      "echo": {
+        "label": "Echo",
+        "description": "共鸣清晰"
+      }
+    }
+  },
+  "call": {
+    "contactName": "AI 助手",
+    "statusConnecting": "连接中...",
+    "statusConnected": "已连接 • 麦克风开启",
+    "statusConnectedMuted": "已连接 • 麦克风关闭",
+    "statusError": "连接失败",
+    "statusDisconnected": "已断开",
+    "endCallButton": "结束通话",
+    "micPermissionTitle": "需要麦克风权限！",
+    "micPermissionDescription": "为了与 AI 伙伴直接聊天，我们需要麦克风权限。别担心，您的隐私是安全的！",
+    "allowMicButton": "允许麦克风",
+    "laterButton": "稍后再说",
+    "tokenDepletedTitle": "您的代币已用完！",
+    "tokenDepletedDescription": "您的代币已用完。让我们充值，这样您就可以继续与 AI 伙伴聊天！",
+    "topupNowButton": "立即充值",
+    "errorTitle": "哎呀，出了点问题！😅",
+    "errorMicDenied": "麦克风访问被拒绝。请在浏览器设置中启用麦克风权限！",
+    "errorConnection": "服务器连接出现问题。别担心，再试一次！",
+    "retryButton": "重试",
+    "retrying": "重试中..."
+  },
+  "tokenDepleted": {
+    "title": "您的代币已用完！😅",
+    "description": "您的代币已用完。让我们充值，这样您就可以继续与 AI 伙伴聊天！",
+    "topupButton": "立即充值",
+    "laterButton": "稍后再说"
+  },
+  "chatBubble": {
+    "topupButton": "立即充值"
+  }
+}
