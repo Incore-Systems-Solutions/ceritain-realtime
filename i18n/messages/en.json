@@ -15,10 +15,13 @@
   "header": {
     "title": "AI Friendly",
     "subtitle": "You're safe here",
-    "callButton": "Start call"
+    "callButton": "Start call",
+    "wizardTitle": "Hello!",
+    "wizardDescription": "Let's chat directly with AI Friendly through voice call. More fun and personal!",
+    "wizardButton": "Let's Talk!"
   },
   "chat": {
-    "emptyTitle": "Start Conversation 💬",
+    "emptyTitle": "Start Conversation",
     "emptyDescription": "Send a message to start chatting with your AI Buddy who's ready to listen",
     "loadingMessage": "Preparing conversation...",
     "typingIndicator": "AI is typing...",

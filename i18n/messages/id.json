@@ -13,12 +13,15 @@
     "edit": "Edit"
   },
   "header": {
-    "title": "AI Friendly💙",
-    "subtitle": "You're safe here ✨",
-    "callButton": "Mulai panggilan"
+    "title": "AI Friendly",
+    "subtitle": "You're safe here",
+    "callButton": "Mulai panggilan",
+    "wizardTitle": "Halo!",
+    "wizardDescription": "Yuk ngobrol langsung sama AI Friendly lewat voice call. Lebih seru dan personal!",
+    "wizardButton": "Ayo Bicara!"
   },
   "chat": {
-    "emptyTitle": "Mulai Percakapan 💬",
+    "emptyTitle": "Mulai Percakapan",
     "emptyDescription": "Kirim pesan untuk mulai ngobrol dengan AI Buddy yang siap dengerin kamu",
     "loadingMessage": "Mempersiapkan percakapan...",
     "typingIndicator": "AI is typing...",

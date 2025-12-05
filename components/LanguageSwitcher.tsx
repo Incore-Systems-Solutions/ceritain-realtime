@@ -4,7 +4,6 @@ import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { Globe } from "lucide-react";
 import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
 
 export function LanguageSwitcher() {
@@ -30,7 +29,7 @@ export function LanguageSwitcher() {
         className="w-11 h-11 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg"
         aria-label="Change language"
       >
-        <Globe className="w-5 h-5 text-white" strokeWidth={2.5} />
+        <span className="text-2xl">{localeFlags[locale as Locale]}</span>
       </button>
 
       <AnimatePresence>

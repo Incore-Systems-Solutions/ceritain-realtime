@@ -15,10 +15,13 @@
   "header": {
     "title": "AI友善",
     "subtitle": "你在這裡很安全。",
-    "callButton": "开始通话"
+    "callButton": "开始通话",
+    "wizardTitle": "你好！",
+    "wizardDescription": "让我们通过语音通话直接与 AI Friendly 聊天。更有趣、更个性化！",
+    "wizardButton": "开始聊天！"
   },
   "chat": {
-    "emptyTitle": "开始对话 💬",
+    "emptyTitle": "开始对话 ",
     "emptyDescription": "发送消息开始与随时倾听您的 AI 伙伴聊天",
     "loadingMessage": "准备对话中...",
     "typingIndicator": "AI 正在输入...",
