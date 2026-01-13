@@ -77,6 +77,9 @@ export function useChatI18n() {
 
         setMessages([aiMessage]);
         setIsInitialized(true);
+
+        // Refresh token balance after initialization
+        window.dispatchEvent(new Event("refreshTokenBalance"));
       } else if (response.errorCode === 1476) {
         // Token habis saat init (fallback)
         const tokenEmptyMessage: Message = {
@@ -160,6 +163,9 @@ export function useChatI18n() {
         };
 
         setMessages((prev) => [...prev, aiMessage]);
+
+        // Refresh token balance after successful message
+        window.dispatchEvent(new Event("refreshTokenBalance"));
       } else if (response.errorCode === 1476) {
         // Token habis saat send message (fallback)
         const tokenEmptyMessage: Message = {

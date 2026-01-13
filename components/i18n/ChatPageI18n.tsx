@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Loader2 } from "lucide-react";
+import { MessageCircle, Loader2, Coins } from "lucide-react";
 import { HeaderBar } from "../HeaderBar";
 import { ChatBubble } from "../ChatBubble";
 import { InputBarI18n } from "./InputBarI18n";
@@ -14,6 +14,7 @@ import { TopupModalI18n } from "./TopupModalI18n";
 import { VoiceSelectionModalI18n } from "./VoiceSelectionModalI18n";
 import { useChatI18n } from "@/hooks/useChatI18n";
 import { useAuth } from "@/context/AuthProvider";
+import { authApi } from "@/lib/auth-api";
 import type { VoiceType } from "@/lib/realtime-api";
 
 export function ChatPageI18n() {
@@ -26,12 +27,52 @@ export function ChatPageI18n() {
     isInitialized,
     hasInsufficientToken,
   } = useChatI18n();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [showTopupModal, setShowTopupModal] = useState(false);
+  const [tokenBalance, setTokenBalance] = useState<number | null>(null);
+  const [loadingToken, setLoadingToken] = useState(false);
+
+  const fetchToken = async () => {
+    if (!token) return;
+
+    setLoadingToken(true);
+    try {
+      const response = await authApi.getToken(token);
+      if (response.errorCode === 0 && response.result !== undefined) {
+        setTokenBalance(response.result);
+      }
+    } catch (error) {
+      console.error("Failed to fetch token:", error);
+    } finally {
+      setLoadingToken(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      fetchToken();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, token]);
+
+  // Listen for token balance refresh event
+  useEffect(() => {
+    const handleRefresh = () => {
+      if (token) {
+        fetchToken();
+      }
+    };
+
+    window.addEventListener("refreshTokenBalance", handleRefresh);
+    return () => {
+      window.removeEventListener("refreshTokenBalance", handleRefresh);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -181,6 +222,27 @@ export function ChatPageI18n() {
             onSendMessage={sendMessage}
             disabled={hasInsufficientToken}
           />
+
+          {/* Token Balance FAB */}
+          {isAuthenticated && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowTopupModal(true)}
+              className="fixed bottom-28 right-6 bg-gradient-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
+            >
+              <Coins className="w-5 h-5" />
+              {loadingToken ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <span className="font-bold text-base">
+                  {tokenBalance !== null ? tokenBalance.toLocaleString() : "-"}
+                </span>
+              )}
+            </motion.button>
+          )}
         </div>
       )}
 
