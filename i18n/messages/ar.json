@@ -134,6 +134,7 @@
     "laterButton": "ربما لاحقًا"
   },
   "chatBubble": {
-    "topupButton": "اشحن الآن"
+    "topupButton": "اشحن الآن",
+    "consultButton": "استشر طبيب نفسي"
   }
 }

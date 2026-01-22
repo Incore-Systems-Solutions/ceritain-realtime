@@ -134,6 +134,7 @@
     "laterButton": "Nanti Deh"
   },
   "chatBubble": {
-    "topupButton": "Topup Sekarang"
+    "topupButton": "Topup Sekarang",
+    "consultButton": "Konsultasi dengan Psikolog"
   }
 }

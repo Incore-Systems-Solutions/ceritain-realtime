@@ -134,6 +134,7 @@
     "laterButton": "稍后再说"
   },
   "chatBubble": {
-    "topupButton": "立即充值"
+    "topupButton": "立即充值",
+    "consultButton": "咨询心理医生"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "errorCode": 0,
+  "message": "Success",
+  "result": {
+    "id": 3080,
+    "userId": 202,
+    "initId": "uuid-00202-1769072085439",
+    "response": "Tentu, aku bisa ngerti kalau kamu mungkin merasa butuh dukungan lebih. Ada banyak psikolog yang bisa membantu, salah satunya bisa kamu temui di [tautan ini](https://care.spilltoai.com/home?t=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjAyLCJuYW1lIjoiRGVtby1TcGlsbCIsImVtYWlsIjoiZGVtb0BzcGlsbHRvYWkuY28uaWQiLCJhZGRyZXNzIjpudWxsLCJyb2xlIjoidXNlciIsImlhdCI6MTc2OTA3MjA4NX0.RTkB3gsGGru-5grgCvf9nyM2irbMr9xIMxEoH0eddJs). Kamu pasti bisa menemukan seseorang yang pas buat kamu di sana. 😊\n\nKalau ada hal lain yang bisa kubantu, ceritakan saja ya.",
+    "isUser": "assistant",
+    "readable": true,
+    "createdAt": "2026-01-22T08:55:13.450Z",
+    "updatedAt": "2026-01-22T08:55:13.450Z",
+    "deletedAt": null
+  }
+}

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Wallet } from "lucide-react";
+import { Wallet, ExternalLink } from "lucide-react";
 import { Message } from "@/hooks/useChat";
 
 interface ChatBubbleProps {
@@ -20,12 +20,27 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
     minute: "2-digit",
   });
 
-  // Debug log
-  console.log("ChatBubble message:", {
-    id: message.id,
-    isTokenEmpty: message.isTokenEmpty,
-    hasOnTopupClick: !!onTopupClick,
-  });
+  // Extract URL from message text
+  const extractCareUrl = (text: string): string | null => {
+    const urlRegex = /(https?:\/\/care\.spilltoai\.com\/[^\s\)]+)/;
+    const match = text.match(urlRegex);
+    return match ? match[1] : null;
+  };
+
+  // Remove markdown link format and return clean text
+  const cleanMessageText = (text: string): string => {
+    // Remove markdown links [text](url) but keep the text
+    return text.replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1");
+  };
+
+  const careUrl = extractCareUrl(message.text);
+  const displayText = cleanMessageText(message.text);
+
+  const handleOpenCareUrl = () => {
+    if (careUrl) {
+      window.open(careUrl, "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <motion.div
@@ -43,8 +58,21 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
       >
         {/* Message Text */}
         <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words font-medium">
-          {message.text}
+          {displayText}
         </p>
+
+        {/* Care URL Button */}
+        {careUrl && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleOpenCareUrl}
+            className="mt-3 w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
+          >
+            <ExternalLink className="w-5 h-5" strokeWidth={2.5} />
+            {t("consultButton") || "Konsultasi dengan Ahli Kesehatan"}
+          </motion.button>
+        )}
 
         {/* Topup Button for Token Empty */}
         {message.isTokenEmpty && onTopupClick && (

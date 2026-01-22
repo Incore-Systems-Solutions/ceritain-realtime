@@ -134,6 +134,7 @@
     "laterButton": "Maybe Later"
   },
   "chatBubble": {
-    "topupButton": "Top Up Now"
+    "topupButton": "Top Up Now",
+    "consultButton": "Consult with Psychologist"
   }
 }
