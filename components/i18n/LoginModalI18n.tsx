@@ -11,15 +11,7 @@ interface LoginModalProps {
   onSuccess: (email: string) => void;
 }
 
-const SLIDER_IMAGES = [
-  "/gambar/1.jpeg",
-  "/gambar/2.jpeg",
-  "/gambar/3.jpeg",
-  "/gambar/4.jpeg",
-  "/gambar/5.jpeg",
-  "/gambar/6.jpeg",
-  "/gambar/7.jpeg",
-];
+const SLIDER_IMAGES = ["/gambar/6.jpeg", "/gambar/7.jpeg", "/gambar/8.jpeg"];
 
 export function LoginModalI18n({ onSuccess }: LoginModalProps) {
   const t = useTranslations("login");
