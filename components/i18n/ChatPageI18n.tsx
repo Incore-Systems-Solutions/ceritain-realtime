@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Loader2, Coins } from "lucide-react";
+import { MessageCircle, Loader2, Coins, BookOpen } from "lucide-react";
 import { HeaderBar } from "../HeaderBar";
 import { ChatBubble } from "../ChatBubble";
 import { InputBarI18n } from "./InputBarI18n";
@@ -222,6 +222,27 @@ export function ChatPageI18n() {
             onSendMessage={sendMessage}
             disabled={hasInsufficientToken}
           />
+
+          {/* Blog Button FAB */}
+          {isAuthenticated && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() =>
+                window.open(
+                  "https://about.spilltoai.com",
+                  "_blank",
+                  "noopener,noreferrer",
+                )
+              }
+              className="fixed bottom-28 left-6 bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
+            >
+              <BookOpen className="w-5 h-5" />
+              <span className="font-bold text-base">Blog</span>
+            </motion.button>
+          )}
 
           {/* Token Balance FAB */}
           {isAuthenticated && (
