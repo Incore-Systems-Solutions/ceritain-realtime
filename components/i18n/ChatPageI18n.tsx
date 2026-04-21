@@ -230,7 +230,7 @@ export function ChatPageI18n() {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.open("tel:911")}
+              onClick={() => window.open("tel:119")}
               className="fixed bottom-28 left-6 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
             >
               <Phone className="w-5 h-5" />

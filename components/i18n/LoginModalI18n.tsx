@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { authApi } from "@/lib/auth-api";
-import { ChevronLeft, ChevronRight, Send, Loader2, Rocket } from "lucide-react";
+import { ChevronLeft, ChevronRight, Send, Loader2, Rocket, Mail } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -112,6 +112,16 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
         setLoading(false);
       }
     }
+  };
+
+  const handleChangeEmail = () => {
+    setStep('email');
+    setEmail("");
+    setInputValue("");
+    setMessages(prev => [...prev, { 
+      sender: 'ai', 
+      text: "Baik, silahkan masukkan email yang benar." 
+    }]);
   };
 
   const nextSlide = () => {
@@ -259,6 +269,21 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
 
           {/* Input Area */}
           <div className="p-4 bg-white border-t border-gray-100 shadow-[0_-4px_20px_-15px_rgba(0,0,0,0.1)] z-10">
+            {step === 'otp' && (
+              <div className="mb-3 flex items-center justify-between px-1">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Mail className="w-4 h-4" />
+                  <span className="font-medium">{email}</span>
+                </div>
+                <button
+                  onClick={handleChangeEmail}
+                  disabled={loading}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+                >
+                  Ganti Email
+                </button>
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="relative flex items-center">
               <input
                 type={step === 'email' ? "email" : "text"}
