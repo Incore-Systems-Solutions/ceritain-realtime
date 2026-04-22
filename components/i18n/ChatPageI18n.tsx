@@ -35,6 +35,7 @@ export function ChatPageI18n() {
   const [showTopupModal, setShowTopupModal] = useState(false);
   const [tokenBalance, setTokenBalance] = useState<number | null>(null);
   const [loadingToken, setLoadingToken] = useState(false);
+  const nudgeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchToken = async () => {
     if (!token) return;
@@ -51,6 +52,58 @@ export function ChatPageI18n() {
       setLoadingToken(false);
     }
   };
+
+  const sendGentleNudge = async () => {
+    if (!token) return;
+
+    const storedInitId = localStorage.getItem("story_init_id");
+    if (!storedInitId) return;
+
+    try {
+      await fetch("https://apiceritain.indonesiacore.com/api/story-ai/initiate-gentle-nudge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          initId: storedInitId,
+        }),
+      });
+      console.log("Gentle nudge sent successfully");
+    } catch (error) {
+      console.error("Failed to send gentle nudge:", error);
+    }
+  };
+
+  // Reset and start nudge timer when AI sends a message
+  useEffect(() => {
+    // Clear existing timer
+    if (nudgeTimerRef.current) {
+      clearTimeout(nudgeTimerRef.current);
+      nudgeTimerRef.current = null;
+    }
+
+    // Only start timer if there are messages and last message is from AI
+    if (messages.length > 0 && !isTyping && isAuthenticated) {
+      const lastMessage = messages[messages.length - 1];
+      
+      if (lastMessage.sender === "ai" && !lastMessage.isTokenEmpty) {
+        // Start 5 minute timer
+        nudgeTimerRef.current = setTimeout(() => {
+          sendGentleNudge();
+        }, 5 * 60 * 1000); // 5 minutes
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (nudgeTimerRef.current) {
+        clearTimeout(nudgeTimerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, isTyping, isAuthenticated]);
 
   useEffect(() => {
     if (isAuthenticated && token) {
