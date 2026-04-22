@@ -108,6 +108,20 @@ export function useChatI18n() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, token, isInitialized]);
 
+  // Listen for gentle nudge messages
+  useEffect(() => {
+    const handleGentleNudge = (event: CustomEvent) => {
+      const nudgeMessage = event.detail;
+      setMessages((prev) => [...prev, nudgeMessage]);
+    };
+
+    window.addEventListener("addGentleNudgeMessage", handleGentleNudge as EventListener);
+
+    return () => {
+      window.removeEventListener("addGentleNudgeMessage", handleGentleNudge as EventListener);
+    };
+  }, []);
+
   const sendMessage = async (text: string) => {
     if (!token || !initId) {
       console.error("Not authenticated or story not initialized");

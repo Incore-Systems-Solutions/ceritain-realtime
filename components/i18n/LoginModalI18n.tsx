@@ -19,13 +19,15 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
   const { login } = useAuth();
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const [step, setStep] = useState<'email' | 'otp'>('email');
+  const [step, setStep] = useState<'email' | 'otp' | 'emergency'>('email');
   const [messages, setMessages] = useState<Array<{sender: 'ai' | 'user', text: string}>>([
     { sender: 'ai', text: "Hallo perkenalkan saya adalah asisten AI anda, untuk menggunakan saya, silahkan informasikan email anda." }
   ]);
   const [inputValue, setInputValue] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authToken, setAuthToken] = useState("");
+  const [userData, setUserData] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto slide every 5 seconds
@@ -92,17 +94,17 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
         const response = await authApi.verifyOTP(email, currentOtp);
         if (response.errorCode === 0 && response.result) {
           const { token, user } = response.result;
-          setMessages(prev => [...prev, { sender: 'ai', text: "Login berhasil! Sedang dialihkan..." }]);
           
-          setTimeout(() => {
-            login(token, {
-              id: user.email,
-              email: user.email,
-              name: user.name,
-              avatar: user.avatar,
-            });
-            onSuccess(email);
-          }, 800);
+          // Save token and user data temporarily
+          setAuthToken(token);
+          setUserData(user);
+          
+          // Ask for emergency contact
+          setMessages(prev => [...prev, { 
+            sender: 'ai', 
+            text: "Oke sip! Btw, buat jaga-jaga aja nih, boleh kasih tau nomor kontak keluarga atau temen deket yang bisa dihubungin kalau ada apa-apa? Kalau ga mau juga gapapa kok, tinggal ketik 'tidak' aja 😊" 
+          }]);
+          setStep('emergency');
         } else {
            setMessages(prev => [...prev, { sender: 'ai', text: response.message || "Kode verifikasi yang anda masukkan salah." }]);
         }
@@ -110,6 +112,91 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
         setMessages(prev => [...prev, { sender: 'ai', text: err instanceof Error ? err.message : "Gagal verifikasi kode OTP" }]);
       } finally {
         setLoading(false);
+      }
+    } else if (step === 'emergency') {
+      const currentInput = inputValue.trim();
+      setMessages(prev => [...prev, { sender: 'user', text: currentInput }]);
+      setInputValue("");
+
+      // Check if user declined
+      const declineWords = ['tidak', 'nggak', 'ngga', 'ga', 'gak', 'skip', 'lewat'];
+      const isDeclined = declineWords.some(word => currentInput.toLowerCase().includes(word));
+
+      if (isDeclined) {
+        // User declined, proceed to login without saving emergency contact
+        setMessages(prev => [...prev, { 
+          sender: 'ai', 
+          text: "Oke deh, no worries! Yuk langsung masuk aja 🚀" 
+        }]);
+        
+        setTimeout(() => {
+          login(authToken, {
+            id: userData.email,
+            email: userData.email,
+            name: userData.name,
+            avatar: userData.avatar,
+          });
+          onSuccess(email);
+        }, 800);
+      } else {
+        // Validate phone number (basic validation for Indonesian phone numbers)
+        const phoneRegex = /^(\+62|62|0)[0-9]{9,12}$/;
+        if (!phoneRegex.test(currentInput.replace(/[\s-]/g, ''))) {
+          setTimeout(() => {
+            setMessages(prev => [...prev, { 
+              sender: 'ai', 
+              text: "Hmm, nomor teleponnya kayaknya kurang lengkap deh. Coba cek lagi ya! Format yang bener contohnya: 081234567890 atau +6281234567890" 
+            }]);
+          }, 500);
+          return;
+        }
+
+        // Save emergency contact
+        setLoading(true);
+        try {
+          await fetch('https://apiceritain.indonesiacore.com/api/users/update-emergency-phone', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              phoneEmergency: currentInput,
+            }),
+          });
+
+          setMessages(prev => [...prev, { 
+            sender: 'ai', 
+            text: "Makasih ya udah kasih tau! Semoga ga kepake sih, tapi at least udah aman. Yuk masuk sekarang! 🎉" 
+          }]);
+
+          setTimeout(() => {
+            login(authToken, {
+              id: userData.email,
+              email: userData.email,
+              name: userData.name,
+              avatar: userData.avatar,
+            });
+            onSuccess(email);
+          }, 800);
+        } catch (err) {
+          setMessages(prev => [...prev, { 
+            sender: 'ai', 
+            text: "Waduh, ada error nih pas nyimpen nomor. Tapi gapapa, kita lanjut aja ya!" 
+          }]);
+          
+          setTimeout(() => {
+            login(authToken, {
+              id: userData.email,
+              email: userData.email,
+              name: userData.name,
+              avatar: userData.avatar,
+            });
+            onSuccess(email);
+          }, 800);
+        } finally {
+          setLoading(false);
+        }
       }
     }
   };
@@ -287,10 +374,16 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
             <form onSubmit={handleSubmit} className="relative flex items-center">
               <input
                 type={step === 'email' ? "email" : "text"}
-                inputMode={step === 'otp' ? "numeric" : undefined}
+                inputMode={step === 'otp' ? "numeric" : step === 'emergency' ? "tel" : undefined}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder={step === 'email' ? "Ketik email kamu..." : "Ketik 6 digit OTP..."}
+                placeholder={
+                  step === 'email' 
+                    ? "Ketik email kamu..." 
+                    : step === 'otp' 
+                    ? "Ketik 6 digit OTP..." 
+                    : "Ketik nomor HP atau 'tidak'..."
+                }
                 disabled={loading}
                 className="w-full pl-5 pr-14 py-3.5 rounded-full border border-gray-200 bg-gray-50 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all text-sm"
               />

@@ -27,7 +27,7 @@ export function ChatPageI18n() {
     isInitialized,
     hasInsufficientToken,
   } = useChatI18n();
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token, user } = useAuth();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [showOTPModal, setShowOTPModal] = useState(false);
@@ -60,7 +60,7 @@ export function ChatPageI18n() {
     if (!storedInitId) return;
 
     try {
-      await fetch("https://apiceritain.indonesiacore.com/api/story-ai/initiate-gentle-nudge", {
+      const response = await fetch("https://apiceritain.indonesiacore.com/api/story-ai/initiate-gentle-nudge", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,10 +70,49 @@ export function ChatPageI18n() {
           initId: storedInitId,
         }),
       });
-      console.log("Gentle nudge sent successfully");
+
+      const data = await response.json();
+      
+      if (data.errorCode === 0 && data.result) {
+        // Add the gentle nudge message to chat
+        const nudgeMessage = {
+          id: `ai-nudge-${data.result.id}`,
+          text: data.result.response,
+          sender: "ai" as const,
+          timestamp: new Date(data.result.createdAt),
+        };
+
+        // Dispatch custom event to add message to chat
+        window.dispatchEvent(new CustomEvent("addGentleNudgeMessage", { 
+          detail: nudgeMessage 
+        }));
+        
+        console.log("Gentle nudge sent and displayed successfully");
+      }
     } catch (error) {
       console.error("Failed to send gentle nudge:", error);
     }
+  };
+
+  const handleEmergencyCall = async () => {
+    // Send notification to emergency contact
+    if (token && user?.id) {
+      try {
+        await fetch(`https://apiceritain.indonesiacore.com/api/consultation/chat/notif-emergency/${user.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        console.log("Emergency notification sent successfully");
+      } catch (error) {
+        console.error("Failed to send emergency notification:", error);
+      }
+    }
+
+    // Open phone dialer
+    window.open("tel:119");
   };
 
   // Reset and start nudge timer when AI sends a message
@@ -89,10 +128,10 @@ export function ChatPageI18n() {
       const lastMessage = messages[messages.length - 1];
       
       if (lastMessage.sender === "ai" && !lastMessage.isTokenEmpty) {
-        // Start 5 minute timer
+        // Start 5 second timer for testing
         nudgeTimerRef.current = setTimeout(() => {
           sendGentleNudge();
-        }, 5 * 60 * 1000); // 5 minutes
+        }, 5 * 60 * 1000); // 5 seconds for testing
       }
     }
 
@@ -283,7 +322,7 @@ export function ChatPageI18n() {
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.open("tel:119")}
+              onClick={handleEmergencyCall}
               className="fixed bottom-28 left-6 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
             >
               <Phone className="w-5 h-5" />
