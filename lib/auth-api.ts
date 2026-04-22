@@ -70,6 +70,32 @@ export interface TokenUsageResponse {
   result?: unknown;
 }
 
+export interface UserMeResponse {
+  errorCode: number;
+  message: string;
+  result?: {
+    id: number;
+    username: string;
+    email: string;
+    name: string;
+    password: string | null;
+    address: string | null;
+    phone: string;
+    avatar: string;
+    active: boolean;
+    verified: boolean;
+    role: string;
+    gender: string;
+    bio: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    isBot: boolean;
+    isAnonim: boolean;
+    phoneEmergency: string;
+  };
+}
+
 export const authApi = {
   async requestOTP(email: string): Promise<RequestOTPResponse> {
     const locale = getCurrentLocale();
@@ -135,6 +161,27 @@ export const authApi = {
 
     if (!response.ok || data.errorCode !== 0) {
       throw new Error(data.message || "Failed to get token");
+    }
+
+    return data;
+  },
+
+  async getUserMe(token: string): Promise<UserMeResponse> {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
+    const response = await fetch(`${API_BASE_URL}/api/users/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Accept-Language": acceptLanguage,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.errorCode !== 0) {
+      throw new Error(data.message || "Failed to get user info");
     }
 
     return data;

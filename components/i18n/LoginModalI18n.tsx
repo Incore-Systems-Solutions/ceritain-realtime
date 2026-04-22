@@ -95,9 +95,23 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
         if (response.errorCode === 0 && response.result) {
           const { token, user } = response.result;
           
-          // Save token and user data temporarily
-          setAuthToken(token);
-          setUserData(user);
+          // Fetch user ID from /api/users/me
+          try {
+            const userMeResponse = await authApi.getUserMe(token);
+            if (userMeResponse.errorCode === 0 && userMeResponse.result) {
+              // Save token and user data with numeric ID
+              setAuthToken(token);
+              setUserData({
+                ...user,
+                id: userMeResponse.result.id, // Use numeric ID from /api/users/me
+              });
+            }
+          } catch (err) {
+            console.error("Failed to fetch user ID:", err);
+            // Fallback to email as ID
+            setAuthToken(token);
+            setUserData(user);
+          }
           
           // Ask for emergency contact
           setMessages(prev => [...prev, { 
@@ -131,7 +145,7 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
         
         setTimeout(() => {
           login(authToken, {
-            id: userData.email,
+            id: userData.id || userData.email, // Use numeric ID if available, fallback to email
             email: userData.email,
             name: userData.name,
             avatar: userData.avatar,
@@ -172,7 +186,7 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
 
           setTimeout(() => {
             login(authToken, {
-              id: userData.email,
+              id: userData.id || userData.email, // Use numeric ID if available, fallback to email
               email: userData.email,
               name: userData.name,
               avatar: userData.avatar,
@@ -187,7 +201,7 @@ export function LoginModalI18n({ onSuccess }: LoginModalProps) {
           
           setTimeout(() => {
             login(authToken, {
-              id: userData.email,
+              id: userData.id || userData.email, // Use numeric ID if available, fallback to email
               email: userData.email,
               name: userData.name,
               avatar: userData.avatar,

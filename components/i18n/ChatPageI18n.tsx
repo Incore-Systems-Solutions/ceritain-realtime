@@ -99,9 +99,8 @@ export function ChatPageI18n() {
     if (token && user?.id) {
       try {
         await fetch(`https://apiceritain.indonesiacore.com/api/consultation/chat/notif-emergency/${user.id}`, {
-          method: "POST",
+          method: "GET",
           headers: {
-            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`,
           },
         });
