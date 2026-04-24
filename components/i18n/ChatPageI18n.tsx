@@ -24,6 +24,7 @@ export function ChatPageI18n() {
     messages,
     isTyping,
     sendMessage,
+    handleHelpMe,
     isInitialized,
     hasInsufficientToken,
   } = useChatI18n();
@@ -72,7 +73,7 @@ export function ChatPageI18n() {
       });
 
       const data = await response.json();
-      
+
       if (data.errorCode === 0 && data.result) {
         // Add the gentle nudge message to chat
         const nudgeMessage = {
@@ -83,10 +84,10 @@ export function ChatPageI18n() {
         };
 
         // Dispatch custom event to add message to chat
-        window.dispatchEvent(new CustomEvent("addGentleNudgeMessage", { 
-          detail: nudgeMessage 
+        window.dispatchEvent(new CustomEvent("addGentleNudgeMessage", {
+          detail: nudgeMessage
         }));
-        
+
         console.log("Gentle nudge sent and displayed successfully");
       }
     } catch (error) {
@@ -125,7 +126,7 @@ export function ChatPageI18n() {
     // Only start timer if there are messages and last message is from AI
     if (messages.length > 0 && !isTyping && isAuthenticated) {
       const lastMessage = messages[messages.length - 1];
-      
+
       if (lastMessage.sender === "ai" && !lastMessage.isTokenEmpty) {
         // Start 5 second timer for testing
         nudgeTimerRef.current = setTimeout(() => {
@@ -280,6 +281,7 @@ export function ChatPageI18n() {
                   key={message.id}
                   message={message}
                   onTopupClick={() => setShowTopupModal(true)}
+                  onHelpMeClick={handleHelpMe}
                 />
               ))}
 

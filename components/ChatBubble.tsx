@@ -2,15 +2,16 @@
 
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Wallet, ExternalLink } from "lucide-react";
+import { Wallet, ExternalLink, LifeBuoy } from "lucide-react";
 import { Message } from "@/hooks/useChat";
 
 interface ChatBubbleProps {
   message: Message;
   onTopupClick?: () => void;
+  onHelpMeClick?: (messageId: string) => void;
 }
 
-export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
+export function ChatBubble({ message, onTopupClick, onHelpMeClick }: ChatBubbleProps) {
   const t = useTranslations("chatBubble");
   const isUser = message.sender === "user";
 
@@ -50,11 +51,10 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
       className={`flex mb-4 ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`max-w-[80%] rounded-3xl px-5 py-3.5 shadow-lg ${
-          isUser
+        className={`max-w-[80%] rounded-3xl px-5 py-3.5 shadow-lg ${isUser
             ? "rounded-br-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white"
             : "rounded-tl-lg bg-white/95 backdrop-blur-sm text-gray-800"
-        }`}
+          }`}
       >
         {/* Message Text */}
         <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words font-medium">
@@ -74,6 +74,19 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
           </motion.button>
         )}
 
+        {/* Help Me Button */}
+        {message.showButtonHelp && !isUser && onHelpMeClick && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onHelpMeClick(message.id)}
+            className="mt-3 w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/30"
+          >
+            <LifeBuoy className="w-5 h-5" strokeWidth={2.5} />
+            Help Me
+          </motion.button>
+        )}
+
         {/* Topup Button for Token Empty */}
         {message.isTokenEmpty && onTopupClick && (
           <motion.button
@@ -89,9 +102,8 @@ export function ChatBubble({ message, onTopupClick }: ChatBubbleProps) {
 
         {/* Timestamp */}
         <p
-          className={`text-[11px] mt-1.5 ${
-            isUser ? "text-right text-white/70" : "text-left text-gray-500"
-          }`}
+          className={`text-[11px] mt-1.5 ${isUser ? "text-right text-white/70" : "text-left text-gray-500"
+            }`}
         >
           {time}
         </p>

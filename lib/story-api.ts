@@ -14,6 +14,7 @@ export interface StoryMessage {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  showButtonHelp?: boolean;
 }
 
 export interface StoryAPIResponse {
@@ -100,6 +101,34 @@ export const storyApi = {
 
     if (!response.ok || data.errorCode !== 0) {
       throw new Error(data.message || "Failed to send message");
+    }
+
+    return data;
+  },
+
+  async actionButtonHelp(
+    token: string,
+    initId: string
+  ): Promise<StoryAPIResponse> {
+    const locale = getCurrentLocale();
+    const acceptLanguage = getAcceptLanguageHeader(locale);
+
+    const response = await fetch(`${API_BASE_URL}/api/story-ai/action-button-help`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        "Accept-Language": acceptLanguage,
+      },
+      body: JSON.stringify({
+        initId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.errorCode !== 0) {
+      throw new Error(data.message || "Failed to request help");
     }
 
     return data;

@@ -9,6 +9,7 @@ export interface Message {
   sender: "user" | "ai";
   timestamp: Date;
   isTokenEmpty?: boolean;
+  showButtonHelp?: boolean;
 }
 
 export function useChat() {
@@ -70,6 +71,7 @@ export function useChat() {
           text: aiResponse,
           sender: "ai",
           timestamp: new Date(response.result.createdAt),
+          showButtonHelp: response.result.showButtonHelp,
         };
 
         setMessages([aiMessage]);
@@ -157,6 +159,7 @@ export function useChat() {
           text: response.result.response,
           sender: "ai",
           timestamp: new Date(response.result.createdAt),
+          showButtonHelp: response.result.showButtonHelp,
         };
 
         setMessages((prev) => [...prev, aiMessage]);
@@ -193,10 +196,43 @@ export function useChat() {
     }
   };
 
+  const handleHelpMe = async (messageId: string) => {
+    if (!token || !initId) return;
+
+    // Optimistically hide the button
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, showButtonHelp: false } : m
+      )
+    );
+    setIsTyping(true);
+
+    try {
+      const response = await storyApi.actionButtonHelp(token, initId);
+
+      if (response.errorCode === 0 && response.result) {
+        const aiMessage: Message = {
+          id: `ai-${response.result.id}`,
+          text: response.result.response,
+          sender: "ai",
+          timestamp: new Date(response.result.createdAt),
+          showButtonHelp: response.result.showButtonHelp,
+        };
+
+        setMessages((prev) => [...prev, aiMessage]);
+      }
+    } catch (error) {
+      console.error("Failed to request help:", error);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   return {
     messages,
     isTyping,
     sendMessage,
+    handleHelpMe,
     isInitialized,
     hasInsufficientToken,
   };
