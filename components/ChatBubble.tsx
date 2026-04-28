@@ -21,25 +21,17 @@ export function ChatBubble({ message, onTopupClick, onHelpMeClick }: ChatBubbleP
     minute: "2-digit",
   });
 
-  // Extract URL from message text
-  const extractCareUrl = (text: string): string | null => {
-    const urlRegex = /(https?:\/\/care\.spilltoai\.com\/[^\s\)]+)/;
-    const match = text.match(urlRegex);
-    return match ? match[1] : null;
-  };
-
   // Remove markdown link format and return clean text
   const cleanMessageText = (text: string): string => {
     // Remove markdown links [text](url) but keep the text
     return text.replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1");
   };
 
-  const careUrl = extractCareUrl(message.text);
   const displayText = cleanMessageText(message.text);
 
-  const handleOpenCareUrl = () => {
-    if (careUrl) {
-      window.open(careUrl, "_blank", "noopener,noreferrer");
+  const handleOpenPsychologUrl = () => {
+    if (message.showButtonPsycholog) {
+      window.open(message.showButtonPsycholog, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -61,12 +53,12 @@ export function ChatBubble({ message, onTopupClick, onHelpMeClick }: ChatBubbleP
           {displayText}
         </p>
 
-        {/* Care URL Button */}
-        {careUrl && (
+        {/* Psychologist Consult Button - when showButtonPsycholog is not null and showButtonHelp is false */}
+        {message.showButtonPsycholog && !message.showButtonHelp && (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={handleOpenCareUrl}
+            onClick={handleOpenPsychologUrl}
             className="mt-3 w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
           >
             <ExternalLink className="w-5 h-5" strokeWidth={2.5} />
@@ -74,8 +66,8 @@ export function ChatBubble({ message, onTopupClick, onHelpMeClick }: ChatBubbleP
           </motion.button>
         )}
 
-        {/* Help Me Button */}
-        {message.showButtonHelp && !isUser && onHelpMeClick && (
+        {/* Help Me Button - when showButtonHelp is true and showButtonPsycholog is null */}
+        {message.showButtonHelp && !message.showButtonPsycholog && onHelpMeClick && (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

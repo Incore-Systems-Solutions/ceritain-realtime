@@ -11,6 +11,7 @@ export interface Message {
   timestamp: Date;
   isTokenEmpty?: boolean;
   showButtonHelp?: boolean;
+  showButtonPsycholog?: string | null;
 }
 
 export function useChatI18n() {
@@ -75,6 +76,7 @@ export function useChatI18n() {
           sender: "ai",
           timestamp: new Date(response.result.createdAt),
           showButtonHelp: response.result.showButtonHelp,
+          showButtonPsycholog: response.result.showButtonPsycholog || null,
         };
 
         setMessages([aiMessage]);
@@ -177,6 +179,7 @@ export function useChatI18n() {
           sender: "ai",
           timestamp: new Date(response.result.createdAt),
           showButtonHelp: response.result.showButtonHelp,
+          showButtonPsycholog: response.result.showButtonPsycholog || null,
         };
 
         setMessages((prev) => [...prev, aiMessage]);
@@ -235,6 +238,7 @@ export function useChatI18n() {
           sender: "ai",
           timestamp: new Date(response.result.createdAt),
           showButtonHelp: response.result.showButtonHelp,
+          showButtonPsycholog: response.result.showButtonPsycholog || null,
         };
 
         setMessages((prev) => [...prev, aiMessage]);
