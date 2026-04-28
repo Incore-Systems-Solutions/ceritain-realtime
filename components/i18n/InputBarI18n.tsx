@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, FormEvent, useRef, useEffect } from "react";
-import { ArrowUp, Smile } from "lucide-react";
+import { Send, Smile } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import type { EmojiClickData } from "emoji-picker-react";
@@ -91,8 +91,8 @@ export function InputBarI18n({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-white/40 to-transparent">
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-4">
+    <div className="fixed bottom-0 left-0 right-0 backdrop-blur-md bg-gradient-to-t from-white/40 to-transparent" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-4 pb-2">
         <div
           className={`flex items-center gap-3 rounded-full px-5 py-3 bg-white/95 backdrop-blur-sm shadow-xl border border-white/50 ${
             disabled ? "opacity-50" : ""
@@ -161,7 +161,7 @@ export function InputBarI18n({
                 className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 flex items-center justify-center shadow-lg hover:shadow-xl active:scale-95 transition-all"
                 aria-label={t("sendButton")}
               >
-                <ArrowUp className="w-5 h-5 text-white" strokeWidth={2.5} />
+                <Send className="w-5 h-5 text-white" strokeWidth={2.5} />
               </motion.button>
             )}
           </AnimatePresence>

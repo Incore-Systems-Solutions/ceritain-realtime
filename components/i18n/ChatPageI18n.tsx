@@ -325,6 +325,7 @@ export function ChatPageI18n() {
               whileTap={{ scale: 0.95 }}
               onClick={handleEmergencyCall}
               className="fixed bottom-28 left-6 bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
+              style={{ bottom: "calc(7rem + env(safe-area-inset-bottom))" }}
             >
               <Phone className="w-5 h-5" />
               <span className="font-bold text-base">HELP</span>
@@ -340,6 +341,7 @@ export function ChatPageI18n() {
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowTopupModal(true)}
               className="fixed bottom-28 right-6 bg-gradient-to-br from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-40 backdrop-blur-sm"
+              style={{ bottom: "calc(7rem + env(safe-area-inset-bottom))" }}
             >
               <Coins className="w-5 h-5" />
               {loadingToken ? (
