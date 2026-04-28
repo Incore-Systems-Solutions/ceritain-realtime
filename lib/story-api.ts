@@ -15,6 +15,7 @@ export interface StoryMessage {
   updatedAt: string;
   deletedAt: string | null;
   showButtonHelp?: boolean;
+  showButtonPsycholog?: string | null;
 }
 
 export interface StoryAPIResponse {
